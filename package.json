@@ -1,0 +1,25 @@
+{
+  "name": "river-settler",
+  "version": "0.0.1",
+  "description": "game rendered using threejs",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jsimmons--dev/river-settler.git"
+  },
+  "keywords": [
+    "threejs"
+  ],
+  "author": "Joshua Simmons, Corey Shannon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jsimmons--dev/river-settler/issues"
+  },
+  "homepage": "https://github.com/Jsimmons--dev/river-settler#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}

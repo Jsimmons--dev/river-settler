@@ -1,0 +1,13 @@
+* {
+  outline: 2px solid salmon;
+}
+
+body {
+  background:lightgrey;
+  width: 98vw;
+  height: 97vh;
+}
+
+canvas {
+  box-sizing: border-box;
+}
