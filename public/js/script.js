@@ -89,8 +89,8 @@ function renderBoard(board,geom,tex){
 /* Start Shape */
 var loader = new THREE.JSONLoader();
 
-loader.load('hex.json',function(geometry,materials){
-		texLoader.load('hexTextureGrey.jpg',function(texture){
+loader.load('assets/hex.json',function(geometry,materials){
+		texLoader.load('assets/hexTextureGrey.jpg',function(texture){
 			renderBoard(board,geometry,texture);
 		})
 });
@@ -116,7 +116,7 @@ var dirLight = new THREE.DirectionalLight(0xffffff);
 
 var controls = new THREE.OrbitControls(camera,renderer.domElement);
 
-waterNormals = new THREE.ImageUtils.loadTexture('waternormals.jpg' );
+waterNormals = new THREE.ImageUtils.loadTexture('assets/waternormals.jpg' );
 				waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
 				water = new THREE.Water( renderer, camera, scene, {
