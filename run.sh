@@ -1,4 +1,4 @@
 cd public/js
-browserify script.js -o compiled.js -t babelify
+browserify script.js -t babelify -o compiled.js 
 cd ../../
 node app.js

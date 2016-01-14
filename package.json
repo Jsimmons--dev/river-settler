@@ -6,6 +6,9 @@
   "scripts": {
     "start": "./run.sh"
   },
+  "babel":{
+ 	"presets":["es2015"] 
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Jsimmons--dev/river-settler.git"
@@ -23,6 +26,7 @@
     "express": "^4.13.3"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0"
   }
 }
