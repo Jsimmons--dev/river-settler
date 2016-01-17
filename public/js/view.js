@@ -1,23 +1,27 @@
 "use strict";
 import * as model from "./model";
 import * as terraHammer from "./utils/worldManip.js";
+
 var scene = new THREE.Scene();
 
-export var loader = new THREE.JSONLoader();
+export var meshLoader = new THREE.JSONLoader();
 export var texLoader = new THREE.TextureLoader();
+export var meshes = {};
+export var loadedTextures = {};
+export var geometries = [[
+        'hex', '../assets/hex.json'
+]];
+export var textures = [[
+        'hex', '../assets/hexTexture.jpg'
+]];
 
-
-export function renderPiece(piece, geom, tex) {
-    var material = new THREE.MeshPhongMaterial({
-        color: model.hexTypes[piece["type"]].color,
-        map: tex
-    });
-
-    var hex = new THREE.Mesh(geom, material);
+export function renderPiece(piece) {
+    var hex = meshes['hex'].clone();
     var worldPos = terraHammer.getWorldPos(piece.pos);
     scene.add(hex);
     hex.position.set(worldPos[1], -.85, worldPos[0]);
     hex.scale.set(.9, 1, .9);
+	console.log(hex,worldPos,piece.pos);
     return hex;
 }
 
@@ -88,5 +92,3 @@ export function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 }
-
-
