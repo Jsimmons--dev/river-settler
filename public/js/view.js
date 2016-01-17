@@ -10,24 +10,72 @@ export var meshes = {};
 export var loadedTextures = {};
 export var geometries = [[
         'hex', '../assets/hex.json'
-]];
+],
+['house', '../assets/house.json'],
+['city', '../assets/city.json'],
+['road', '../assets/road.json']
+];
 export var textures = [[
-        'hex', '../assets/hexTexture.jpg'
+        'hex', '../assets/sheep.jpg'
 ]];
 
-export function renderPiece(piece) {
+export function renderPiece(model) {
+    var piece = meshes[model.type].clone();
+    scene.add(piece);
+    piece.position.set(model.pos[0], model.pos[1], model.pos[2]);
+    if (model.rot)
+        piece.rotation.set(0, model.rot[1], 0);
+    piece.scale.set(model.scale[0], model.scale[1], model.scale[2]);
+    return piece;
+}
+export function renderCity(model) {
+    model.scale = [.3, .5, .3];
+    renderPiece(model);
+}
+export function renderHouse(tiles) {
+    var model = {};
+    model.type = 'house';
+    model.pos = terraHammer.getHousePos(tiles[0].pos, tiles[1].pos, tiles[2].pos);
+    model.scale = [.1, .2, .1];
+    renderPiece(model);
+}
+
+function higherTileOdd(tiles) {
+    var higher = (tiles[0].pos[2] > tiles[1].pos[2]) ? tiles[0].pos[2] : tiles[1].pos[2];
+	return higher%2==1;
+}
+function sameX(tiles){
+	return tiles[0].pos[0] === tiles[1].pos[0];
+}
+function tilesSameLevel(tiles){
+	return tiles[0].pos[2] === tiles[1].pos[2];
+}
+export function renderRoad(tiles) {
+    var model = {};
+    model.type = 'road';
+    model.pos = terraHammer.getRoadPos(tiles[0].pos, tiles[1].pos);
+    var rot = (tilesSameLevel(tiles))?[0,0,0]:(sameX(tiles))?[0,65*Math.PI/180,0]:[0,-65*Math.PI/180,0];
+	if(!higherTileOdd(tiles)){
+		rot[1] = -rot[1];
+	}
+	model.rot = rot;
+    model.scale = [.15, .15, .15];
+    renderPiece(model);
+}
+
+export function renderHex(piece) {
     var hex = meshes['hex'].clone();
     var worldPos = terraHammer.getWorldPos(piece.pos);
     scene.add(hex);
-    hex.position.set(worldPos[1], -.85, worldPos[0]);
-    hex.scale.set(.9, 1, .9);
-	console.log(hex,worldPos,piece.pos);
+    hex.position.set(worldPos[0], worldPos[1], worldPos[2]);
+    hex.rotation.set(0, Math.PI / 2, 0);
+    hex.scale.set(.48, .5, .48);
     return hex;
 }
 
 export function renderRow(row, geom, tex) {
     row.forEach(function (d, i) {
-        renderPiece(d, geom, tex)
+        renderHex(d, geom, tex)
     });
 }
 
@@ -37,9 +85,6 @@ export function renderBoard(board, geom, tex) {
         renderRow(d, geom, tex);
     });
 }
-
-
-
 
 export var camera = new THREE.PerspectiveCamera(75,
     window.innerWidth / window.innerHeight,
