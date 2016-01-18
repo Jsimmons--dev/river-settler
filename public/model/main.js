@@ -312,15 +312,21 @@ var GameState = function() {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
+
+	this.updatePlayerpSettlements = (houseTuple) => {
+		//TODO 
+		//remove possible houses adjacent to one just purchased
+	}
 };
 
 var PlayerState = function() {
 	this.gameState; //TODO update this every turn
     this.id;
-    this.houses;
-    this.roads;
-    this.pSettlements;
-    this.pRoads;
+    this.houses = [];
+    this.roads = [];
+    this.pSettlements = [];
+	this.pCities = [];
+    this.pRoads = [];
     this.lumber = 4;
     this.brick = 4;
     this.wool = 2;
@@ -331,22 +337,48 @@ var PlayerState = function() {
         sort(houseTuple);
         var houseID = houseTuple.join("_");
         var [q, r, s] = houseTuple;
-        if (this.isPossibleHouse(houseTuple) && this.hasResources(settlementPrice)) {
+        if (this.isPossibleHouse(houseTuple, this.pSettlements) && this.hasResources(settlementPrice)) {
             this.removeResources(settlementPrice);
             var newHouse = {
                 id: houseID,
                 type: "settlement"
             }
-            addTriple(this.houses, q, r, s, obj);
-            addTriple(this.gameState.Houses, q, r, s, obj);
+            addTriple(this.houses, q, r, s, newHouse);
+			//add to gameStates houses
+            addTriple(this.gameState.Houses, q, r, s, newHouse);
             removeTriple(this.pSettlements, q, r, s);
 			this.addpRoads(houseTuple);
+			this.addpCity(houseTuple);
             this.subscribeToHexes(houseTuple);
+			this.gameState.updatePlayerpSettlements(houseTuple);
         }
     }
-	this.buyCity = (houseTuple) => {
 
+	this.buyCity = (houseTuple) => {
+		sort(houseTuple);
+		var houseID = houseTuple.join("_");
+		var [q, r, s] = houseTuple;
+		if (this.isPossibleHouse(houseTuple, this.pCities) && this.hasResources(cityPrice)){
+			this.removeResources(cityPrice);
+			var newHouse = {
+				id: houseID,
+				type: "city"
+			}
+			addTriple(this.houses, q, r, s, newHouse);
+			//add to gameStates houses
+			addTriple(this.gameState.Houses, q, r, s, newHouse);
+			removeTriple(this.pCities, q, r, s);
+			this.subscribeToHexes(houseTuple);
+		}
 	}
+
+	this.addpCity = (houseTuple) => {
+		sort(houseTuple);
+		var houseID = houseTuple.join("_");
+		var [q, r, s] = houseTuple;
+		addTriple(this.pCities, q, r, s, {id: houseID});
+	}
+
 	this.addpRoads = (houseTuple) => {
 		sort(houseTuple);
 		var [q, r, s] = houseTuple;
@@ -363,7 +395,6 @@ var PlayerState = function() {
 		addDouble(this.pRoads, q, r, qr);
 		addDouble(this.pRoads, r, s, rs);
 		addDouble(this.pRoads, q, s, qs);
-		
 	}
 	this.removeResources = (price) => {
 		console.log(price);
@@ -409,8 +440,8 @@ var removeTriple = (arr, x, y, z) => {
 var removeDouble = (arr, x, y) => {
 	arr[x][y] = "placed";
 }
-    //Fisher-Yates, via mbostock
 
+//Fisher-Yates, via mbostock
 function shuffle(array) {
     var m = array.length,
         t, i;
@@ -434,8 +465,4 @@ myGame.Hexes.forEach((hex) => {
     console.log(hex.id, hex.x, hex.y);
 });
 
-var b = 10;
-for (var i = 0; i < b; i++){
-	console.log(i);
-	b++;
-}
+
