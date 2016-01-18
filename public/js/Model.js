@@ -137,6 +137,7 @@ export var Game = function() {
 
         var assignResourceToken = (hex) => {
             hex.resource = landStack.pop();
+			hex.type = "land";
             var token = tokenStack.pop();
             hex.token = token;
             if (this.TokenMap[token] == undefined) {
@@ -148,6 +149,15 @@ export var Game = function() {
             this.TokenMap[token].hexes.push(this.Hexes[tileNum]);
             this.TokenMap[hex.token]
         }
+
+		var assignWater = (hex) => {
+			var tile = waterStack.pop();
+			hex.type = tile.type;
+			if (hex.type == "port") {
+				hex.exchange = tile.resource;
+			}
+		}
+
         var tileNum = 0;
         var rowLength = edgeWidth;
         var rowEnd = -1;
@@ -169,6 +179,7 @@ export var Game = function() {
                 };
                 if (rowLength == edgeWidth || i == 0 || i == rowLength - 1) {
                     //WATER or PORT
+					assignWater(this.Hexes[tileNum]);
                     //add corner at end of rows
                     if (i == rowLength - 1 && rowEnd > edgeWidth) {
                         this.addVertex([tileNum, tileNum - 1, tileNum - rowLength], "coastal");
@@ -208,6 +219,7 @@ export var Game = function() {
                 };
                 if (i == 0 || rowLength == edgeWidth || i == rowLength - 1) {
                     //WATER or PORT
+					assignWater(this.Hexes[tileNum]);
                     //start of row, add top corner
                     //end of row or non-start hex in bottom row, add top and top left corners
                     this.addVertex([tileNum, tileNum - rowLength, tileNum - rowLength - 1], "coastal");
@@ -306,8 +318,8 @@ export var Game = function() {
                 this.Hexes[oldHex].bottomLeft = this.Hexes[newHex];
         }
     }
-
 }
+
 var GameState = function() {
     this.PlayerStates = [];
     this.Houses = [];
@@ -378,7 +390,35 @@ var PlayerState = function() {
 		var [q, r, s] = houseTuple;
 		addTriple(this.pCities, q, r, s, {id: houseID});
 	}
-
+	this.buyRoad = (roadTuple) => {
+		sort(roadTuple);
+		var roadID = roadTuple.join("_");
+		var [u, v] = roadTuple;
+		if (this.isPossibleRoad(roadTuple) && this.hasResources(roadPrice)){
+			this.removeResources(roadPrice);
+			var newRoad = {
+				id: roadID,
+				type: "road"
+			}
+			addDouble(this.roads, u, v, newRoad);
+			addDouble(this.gameState.Houses, u, v);
+			removeDouble(this.pRoads, u, v);
+			//add pSettlement
+			var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj);
+			var t = intersection.pop();
+			var pHouseTuple = [t, u, v];
+			sort(pHouseTuple);
+			var houseID = pHouseTuple.join("_");
+			var [q, r, s] = pHouseTuple;
+			addTriple(this.pSettlements, q, r, s, {id: houseID});
+			t = intersection.pop();
+			pHouseTuple = [t, u, v];
+			sort(pHouseTuple);
+			houseID = pHouseTuple.join("_");
+			[q, r, s] = pHouseTuple;
+			addTriple(this.pSettlements, q, r, s, {id: houseID});
+		}
+	}
 	this.addpRoads = (houseTuple) => {
 		sort(houseTuple);
 		var [q, r, s] = houseTuple;
@@ -452,4 +492,23 @@ function shuffle(array) {
         array[i] = t;
     }
 }
+//array intersection, from stackoverflow question 1885557
+function intersect_safe(a, b)
+{
+  var ai=0, bi=0;
+  var result = new Array();
 
+  while( ai < a.length && bi < b.length )
+  {
+     if      (a[ai] < b[bi] ){ ai++; }
+     else if (a[ai] > b[bi] ){ bi++; }
+     else /* they're equal */
+     {
+       result.push(a[ai]);
+       ai++;
+       bi++;
+     }
+  }
+
+  return result;
+}
