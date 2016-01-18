@@ -325,11 +325,38 @@ export var Game = function () {
     }
 }
 
-export var GameState = function () {
+export var GameState = function (game) {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
 
+this.houseEach = (callback) => {
+    for (var i = 0; i < this.Houses.length; i++) {
+        if (this.Houses[i] !== undefined) {
+            for (var j = 0; j < this.Houses[i].length; j++) {
+                if (this.Houses[i][j] !== undefined) {
+                    for (var k = 0; k < this.Houses[i][j].length; k++) {
+                        if (this.Houses[i][j][k] !== undefined) {
+                            callback(this.Houses[i][j][k], game);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+this.roadEach = (callback)=> {
+    for (var i = 0; i < this.Roads.length; i++) {
+        if (this.Roads[i] !== undefined) {
+            for (var j = 0; j < this.Roads[i].length; j++) {
+                if (this.Roads[i][j] !== undefined) {
+                    callback(this.Roads[i][j], game);
+                }
+            }
+        }
+    }
+}
     this.pushPlayerState = function (state) {
         this.PlayerStates.push(state);
         return this.PlayerStates.length - 1;
@@ -372,10 +399,10 @@ export var PlayerState = function (state) {
             addTriple(this.houses, q, r, s, newHouse);
             //add to gameStates houses
             addTriple(this.gameState.Houses, q, r, s, newHouse);
-            //removeTriple(this.pSettlements, q, r, s);
-            //this.addpRoads(houseTuple);
-            //this.addpCity(houseTuple);
-            //this.subscribeToHexes(houseTuple);
+            removeTriple(this.pSettlements, q, r, s);
+            this.addpRoads(houseTuple);
+            this.addpCity(houseTuple);
+            this.subscribeToHexes(houseTuple);
             this.gameState.updatePlayerpSettlements(houseTuple);
         }
     }
@@ -418,7 +445,7 @@ export var PlayerState = function (state) {
             }
             addDouble(this.roads, u, v, newRoad);
             addDouble(this.gameState.Houses, u, v);
-            removeDouble(this.pRoads, u, v);
+            //removeDouble(this.pRoads, u, v);
             //add pSettlement
             var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj);
             var t = intersection.pop();

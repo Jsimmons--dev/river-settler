@@ -41,11 +41,11 @@ function main() {
    // var board = model.createSimpleBoard([0, 0]);
 	var myGame = new model.Game();
 	myGame.genBoard(4, 7);
-	var gameState = new model.GameState();
+	var gameState = new model.GameState(myGame);
 	myGame.pushGameState(gameState);
 	var player0 = new model.PlayerState(gameState);
 	gameState.pushPlayerState(player0);
-	player0.buySettlement([1,2,6]);
+	player0.buyCity([1,2,6]);
 	console.log(myGame);
 	view.renderBoard(myGame);
     view.render();
