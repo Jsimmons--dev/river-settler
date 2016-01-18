@@ -4,7 +4,8 @@
   "description": "game rendered using threejs",
   "main": "app.js",
   "scripts": {
-    "start": "./run.sh"
+    "start": "./run.sh",
+	"model": "./run-model.sh"
   },
   "babel": {
     "presets": [
