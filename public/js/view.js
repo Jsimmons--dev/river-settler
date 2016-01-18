@@ -42,32 +42,34 @@ export function renderHouse(tiles) {
 
 function higherTileOdd(tiles) {
     var higher = (tiles[0].pos[2] > tiles[1].pos[2]) ? tiles[0].pos[2] : tiles[1].pos[2];
-	return higher%2==1;
+    return higher % 2 == 1;
 }
-function sameX(tiles){
-	return tiles[0].pos[0] === tiles[1].pos[0];
+
+function sameX(tiles) {
+    return tiles[0].pos[0] === tiles[1].pos[0];
 }
-function tilesSameLevel(tiles){
-	return tiles[0].pos[2] === tiles[1].pos[2];
+
+function tilesSameLevel(tiles) {
+    return tiles[0].pos[2] === tiles[1].pos[2];
 }
 export function renderRoad(tiles) {
     var model = {};
     model.type = 'road';
     model.pos = terraHammer.getRoadPos(tiles[0].pos, tiles[1].pos);
-    var rot = (tilesSameLevel(tiles))?[0,0,0]:(sameX(tiles))?[0,65*Math.PI/180,0]:[0,-65*Math.PI/180,0];
-	if(!higherTileOdd(tiles)){
-		rot[1] = -rot[1];
-	}
-	model.rot = rot;
+    var rot = (tilesSameLevel(tiles)) ? [0, 0, 0] : (sameX(tiles)) ? [0, 65 * Math.PI / 180, 0] : [0, -65 * Math.PI / 180, 0];
+    if (!higherTileOdd(tiles)) {
+        rot[1] = -rot[1];
+    }
+    model.rot = rot;
     model.scale = [.15, .15, .15];
     renderPiece(model);
 }
 
 export function renderHex(piece) {
     var hex = meshes['hex'].clone();
-    var worldPos = terraHammer.getWorldPos(piece.pos);
+    //var worldPos = terraHammer.getWorldPos(piece.pos);
     scene.add(hex);
-    hex.position.set(worldPos[0], worldPos[1], worldPos[2]);
+    hex.position.set(piece.x, 0, piece.y*.77);
     hex.rotation.set(0, Math.PI / 2, 0);
     hex.scale.set(.48, .5, .48);
     return hex;

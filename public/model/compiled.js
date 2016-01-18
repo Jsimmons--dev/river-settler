@@ -319,6 +319,11 @@ var GameState = function GameState() {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
+
+    this.updatePlayerpSettlements = function (houseTuple) {
+        //TODO
+        //remove possible houses adjacent to one just purchased
+    };
 };
 
 var PlayerState = function PlayerState() {
@@ -326,10 +331,11 @@ var PlayerState = function PlayerState() {
 
     this.gameState; //TODO update this every turn
     this.id;
-    this.houses;
-    this.roads;
-    this.pSettlements;
-    this.pRoads;
+    this.houses = [];
+    this.roads = [];
+    this.pSettlements = [];
+    this.pCities = [];
+    this.pRoads = [];
     this.lumber = 4;
     this.brick = 4;
     this.wool = 2;
@@ -346,28 +352,68 @@ var PlayerState = function PlayerState() {
         var r = _houseTuple[1];
         var s = _houseTuple[2];
 
-        if (_this2.isPossibleHouse(houseTuple) && _this2.hasResources(settlementPrice)) {
+        if (_this2.isPossibleHouse(houseTuple, _this2.pSettlements) && _this2.hasResources(settlementPrice)) {
             _this2.removeResources(settlementPrice);
             var newHouse = {
                 id: houseID,
                 type: "settlement"
             };
-            addTriple(_this2.houses, q, r, s, obj);
-            addTriple(_this2.gameState.Houses, q, r, s, obj);
+            addTriple(_this2.houses, q, r, s, newHouse);
+            //add to gameStates houses
+            addTriple(_this2.gameState.Houses, q, r, s, newHouse);
             removeTriple(_this2.pSettlements, q, r, s);
             _this2.addpRoads(houseTuple);
+            _this2.addpCity(houseTuple);
             _this2.subscribeToHexes(houseTuple);
+            _this2.gameState.updatePlayerpSettlements(houseTuple);
         }
     };
-    this.buyCity = function (houseTuple) {};
-    this.addpRoads = function (houseTuple) {
+
+    this.buyCity = function (houseTuple) {
         sort(houseTuple);
+        var houseID = houseTuple.join("_");
 
         var _houseTuple2 = _slicedToArray(houseTuple, 3);
 
         var q = _houseTuple2[0];
         var r = _houseTuple2[1];
         var s = _houseTuple2[2];
+
+        if (_this2.isPossibleHouse(houseTuple, _this2.pCities) && _this2.hasResources(cityPrice)) {
+            _this2.removeResources(cityPrice);
+            var newHouse = {
+                id: houseID,
+                type: "city"
+            };
+            addTriple(_this2.houses, q, r, s, newHouse);
+            //add to gameStates houses
+            addTriple(_this2.gameState.Houses, q, r, s, newHouse);
+            removeTriple(_this2.pCities, q, r, s);
+            _this2.subscribeToHexes(houseTuple);
+        }
+    };
+
+    this.addpCity = function (houseTuple) {
+        sort(houseTuple);
+        var houseID = houseTuple.join("_");
+
+        var _houseTuple3 = _slicedToArray(houseTuple, 3);
+
+        var q = _houseTuple3[0];
+        var r = _houseTuple3[1];
+        var s = _houseTuple3[2];
+
+        addTriple(_this2.pCities, q, r, s, { id: houseID });
+    };
+
+    this.addpRoads = function (houseTuple) {
+        sort(houseTuple);
+
+        var _houseTuple4 = _slicedToArray(houseTuple, 3);
+
+        var q = _houseTuple4[0];
+        var r = _houseTuple4[1];
+        var s = _houseTuple4[2];
 
         var qr, rs, qs;
         qr = {
@@ -398,11 +444,11 @@ var PlayerState = function PlayerState() {
     this.isPossibleHouse = function (houseTuple, pHouses) {
         sort(houseTuple);
 
-        var _houseTuple3 = _slicedToArray(houseTuple, 3);
+        var _houseTuple5 = _slicedToArray(houseTuple, 3);
 
-        var q = _houseTuple3[0];
-        var r = _houseTuple3[1];
-        var s = _houseTuple3[2];
+        var q = _houseTuple5[0];
+        var r = _houseTuple5[1];
+        var s = _houseTuple5[2];
 
         if (pHouses[q] == undefined || pHouses[q][r] == undefined || pHouses[q][r][s] == undefined || pHouses[q][r][s] == "placed") return false;
         return true;
@@ -433,8 +479,8 @@ var removeTriple = function removeTriple(arr, x, y, z) {
 var removeDouble = function removeDouble(arr, x, y) {
     arr[x][y] = "placed";
 };
-//Fisher-Yates, via mbostock
 
+//Fisher-Yates, via mbostock
 function shuffle(array) {
     var m = array.length,
         t,
@@ -458,11 +504,5 @@ console.log(myGame.numEdges); //72
 myGame.Hexes.forEach(function (hex) {
     console.log(hex.id, hex.x, hex.y);
 });
-
-var b = 10;
-for (var i = 0; i < b; i++) {
-    console.log(i);
-    b++;
-}
 
 },{}]},{},[1]);

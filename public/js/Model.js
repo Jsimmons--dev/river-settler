@@ -22,7 +22,7 @@ var sort = (array) => {
         return a - b;
     });
 }
-var Game = function() {
+export var Game = function() {
     this.gameStates = [];
     this.Hexes = [];
     this.Edges = [];
@@ -452,17 +452,4 @@ function shuffle(array) {
         array[i] = t;
     }
 }
-var myGame = new Game();
-myGame.genBoard(4, 7);
-console.log(myGame.Hexes);
-console.log(myGame.Edges);
-console.log(myGame.Vertices);
-console.log(myGame.Hexes.length); //37
-console.log(myGame.numVertices); //54
-console.log(myGame.numEdges); //72
-
-myGame.Hexes.forEach((hex) => {
-    console.log(hex.id, hex.x, hex.y);
-});
-
 
