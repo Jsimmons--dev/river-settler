@@ -41,24 +41,13 @@ function main() {
    // var board = model.createSimpleBoard([0, 0]);
 	var myGame = new model.Game();
 	myGame.genBoard(4, 7);
+	var gameState = new model.GameState();
+	myGame.pushGameState(gameState);
+	var player0 = new model.PlayerState(gameState);
+	gameState.pushPlayerState(player0);
+	player0.buySettlement([1,2,6]);
 	console.log(myGame);
-	myGame.Hexes.forEach((d)=>{
-		view.renderHex(d);
-	});
-
-    //view.renderBoard(board);
-   // view.renderHouse([{
-   //     pos: [1, 0, 0]
-   // }, {
-   //     pos: [1, 0, 1]
-   // }, {
-   //     pos: [2, 0, 1]
-   // }]);
-   // view.renderRoad([{
-   //     pos: [0, 0, 0]
-   // }, {
-   //     pos: [0, 0, 1]
-   // }]);
+	view.renderBoard(myGame);
     view.render();
 }
 

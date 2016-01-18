@@ -32,10 +32,13 @@ export function renderCity(model) {
     model.scale = [.3, .5, .3];
     renderPiece(model);
 }
-export function renderHouse(tiles) {
+
+export function renderSettlement(house, game) {
     var model = {};
     model.type = 'house';
-    model.pos = terraHammer.getHousePos(tiles[0].pos, tiles[1].pos, tiles[2].pos);
+    var [x,z] = terraHammer.geomCenter(house.id, game);
+	model.pos = [x,0,z];
+	console.log(model.pos);
     model.scale = [.1, .2, .1];
     renderPiece(model);
 }
@@ -69,23 +72,35 @@ export function renderHex(piece) {
     var hex = meshes['hex'].clone();
     //var worldPos = terraHammer.getWorldPos(piece.pos);
     scene.add(hex);
-    hex.position.set(piece.x, 0, piece.y*.77);
+    hex.position.set(piece.x, 0, piece.y * .77);
     hex.rotation.set(0, Math.PI / 2, 0);
     hex.scale.set(.48, .5, .48);
     return hex;
 }
 
-export function renderRow(row, geom, tex) {
-    row.forEach(function (d, i) {
-        renderHex(d, geom, tex)
-    });
-}
 
-
-export function renderBoard(board, geom, tex) {
-    board.tiles.forEach(function (d, i) {
-        renderRow(d, geom, tex);
+export function renderBoard(game) {
+    game.Hexes.forEach((d) => {
+        renderHex(d);
     });
+    var gs = game.peekGameState().Houses;
+	console.log('gameState ',gs);
+    for (var i = 0; i < gs.length; i++) {
+            console.log(gs[i]);
+        if (gs[i] !== undefined) {
+            for (var j = 0; j < gs[i].length; j++) {
+                    console.log(gs[i][j]);
+                if (gs[i][j] !== undefined) {
+                    for (var k = 0; k < gs[i][j].length; k++) {
+                            console.log(gs[i][j][k]);
+                        if (gs[i][j][k] !== undefined) {
+                            renderSettlement(gs[i][j][k], game);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 export var camera = new THREE.PerspectiveCamera(75,
