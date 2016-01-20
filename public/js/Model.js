@@ -646,7 +646,7 @@ export function gameOver(game) {
 
 export function determinePlayer(game) {
     var players = game.peekGameState().PlayerStates;
-	console.log(game.peekGameState().turnCount;
+	console.log(game.peekGameState().turnCount, game.peekGameState().turnCount % players.length);
     return players[game.peekGameState().turnCount % players.length];
 }
 
@@ -688,13 +688,34 @@ export function robberMove(player, game, hexID) {
 		if (numRes > 7){
 			var lostRes = Math.ceil(numRes/2);
 			while (lostRes > 0){
-												
-				lostRes--;
+				var res = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
+				if (player.res > 0) {
+					player.res--;	
+					lostRes--;
+				}
 			}
 		}
 	});
+	//move robber to hexID
+	game.Hexes[hexID].robber = true;
+	var prevLoc = game.peekGameState().robberLoc;
+	game.peekGameState().robberLoc = hexID;
+	game.Hexes[prevLoc].robber = false;
+	
+    //steal random resource from player
+	if (game.Hexes[hexID].subscribers) {
+		var owner = game.Hexes[hexID].subscribers[0];
 
-    //
+		var steal = () => {
+			var stealRes = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
+			if (owner.stealRes > 0) {
+				owner.stealRes--;
+				player.stealRes++;
+			} else {
+				steal();
+			}
+		}
+	}
 }
 
 export function rollDice() {
