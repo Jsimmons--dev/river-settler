@@ -51,8 +51,8 @@ export var Game = function() {
         numLandTiles += middleWidth - 2;
         shuffle(this.tokenNumbers);
         for (var i = 0; i < numLandTiles; i++) {
-            landStack.push(this.landTypes[i % (this.landTypes.length - 1)]);
-            tokenStack.push(this.tokenNumbers[i % (this.tokenNumbers.length - 1)]);
+            landStack.push(this.landTypes[i % (this.landTypes.length)]);
+            tokenStack.push(this.tokenNumbers[i % (this.tokenNumbers.length)]);
         }
         shuffle(landStack);
         shuffle(tokenStack);
@@ -331,7 +331,7 @@ export var GameState = function(game) {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
-
+	this.turnCount = 0;
     this.houseEach = (callback) => {
         for (var i = 0; i < this.Houses.length; i++) {
             if (this.Houses[i] !== undefined) {
@@ -610,15 +610,23 @@ export function gameOver(game){
 }
 
 export function determinePlayer(game){
-	return	game.peekGameState().PlayerStates[0];
+	var players = game.peekGameState().PlayerStates;
+	return players[game.peekGameState().turnCount % players.length];
 }
 
 export function distributeRes(roll,game){
-	return	[{},{'grain':2}]; 
+	var playerGains = [];
+	game.TokenMap[roll].forEach((hex) => {
+		hex.subscribers.forEach((sub) => {
+			game.peekGameState().PlayerStates[sub][hex.resource]++;
+			playerGains[sub][hex.resource]++;
+		});
+	});
+	return playerGains;	
 }
 
 export function endTurn(player,game){
-			
+	game.peekGameState().turnCount++;			
 }
 
 export function endGame(game){
