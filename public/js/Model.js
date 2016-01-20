@@ -651,6 +651,7 @@ export function determinePlayer(game) {
 
 export function distributeRes(roll, game) {
     var playerGains = [];
+	console.log("in distribRes", "TokenMap", game.TokenMap);
     game.TokenMap[roll].forEach((hex) => {
         hex.subscribers.forEach((sub) => {
             if (!hex.robber) {
