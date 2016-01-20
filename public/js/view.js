@@ -29,7 +29,7 @@ export var textures = [
 	   	['hex-brick', '../assets/Brick.png']
 ];
 
-export function renderPiece(model) {
+export function renderPiece(model, hex) {
     var piece = meshes[model.type].clone();
     scene.add(piece);
     piece.position.set(model.pos[0], model.pos[1], model.pos[2]);
@@ -39,7 +39,7 @@ export function renderPiece(model) {
     return piece;
 }
 
-export function renderCity(model) {
+export function renderCity(model, hex) {
     model.scale = [.3, .5, .3];
     renderPiece(model);
 }
@@ -91,6 +91,8 @@ export function renderHex(piece) {
         }
         console.log(id);
         var hex = meshes[id].clone();
+		hex.hexID = piece.id;
+		hex.hex = piece;
         //var worldPos = terraHammer.getWorldPos(piece.pos);
         scene.add(hex);
         hex.position.set(piece.x, 0, piece.y * .77);
@@ -117,6 +119,9 @@ export var camera = new THREE.PerspectiveCamera(75,
 export var renderer = new THREE.WebGLRenderer();
 
 export var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.mouseButtons = {
+	ORBIT: THREE.MOUSE.RIGHT, ZOOM: 4, PAN: THREE.MOUSE.MIDDLE
+}
 renderer.setClearColor(0x88ddff);
 renderer.setSize(window.innerWidth * .985,
     window.innerHeight * .98);
@@ -242,4 +247,30 @@ export function showEndOfTurn(player, endTurn, game) {
 }
 export function moveRobber(movePair,game){
 
+}
+export function attachClick(callback) {
+	var raycaster = new THREE.Raycaster();
+	var projector = new THREE.Projector();
+	var directionVector = new THREE.Vector3();
+
+	document.querySelector('canvas').addEventListener("click", function(evt) {
+		var SCREEN_WIDTH = window.innerWidth * .985;
+		var SCREEN_HEIGHT = window.innerHeight * .98;
+		var x= (evt.clientX / SCREEN_WIDTH) * 2 - 1;
+		var y = -(evt.clientY / SCREEN_HEIGHT) * 2 + 1;
+
+		directionVector.set(x, y, 1);
+		projector.unprojectVector(directionVector, camera);
+		directionVector.sub(camera.position);
+		directionVector.normalize();
+		raycaster.set(camera.position, directionVector);
+		var intersects = raycaster.intersectObjects(scene.children, true);
+		if (intersects.length) {
+			var target = intersects[0].object;
+			console.log("click", target);
+			callback(target);
+		}
+	}, false);
+
+attachClick();
 }
