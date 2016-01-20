@@ -17,14 +17,12 @@ var devCardPrice = {
     "wool": 1,
     "grain": 1
 }
-export
-var sort = (array) => {
+export var sort = (array) => {
     return array.sort((a, b) => {
         return a - b;
     });
 }
-export
-var Game = function() {
+export var Game = function() {
     this.gameStates = [];
     this.peekGameState = () => {
         return this.gameStates[this.gameStates.length - 1];
@@ -335,8 +333,7 @@ var Game = function() {
     }
 }
 
-export
-var GameState = function(game) {
+export var GameState = function(game) {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
@@ -405,8 +402,7 @@ var GameState = function(game) {
     }
 };
 
-export
-var PlayerState = function(state) {
+export var PlayerState = function(state) {
     this.gameState = state; //TODO update this every turn
     this.id = state.PlayerStates.length;
     this.houses = [];
@@ -580,34 +576,29 @@ var PlayerState = function(state) {
         return VP;
     }
 };
-export
-var addTriple = (arr, x, y, z, obj) => {
+export var addTriple = (arr, x, y, z, obj) => {
     if (x > y || y > z) console.error("Tried to addTriple with improper coord order");
     if (arr[x] == undefined) arr[x] = [];
     if (arr[x][y] == undefined) arr[x][y] = [];
     if (arr[x][y][z] == "placed") return;
     arr[x][y][z] = obj;
 }
-export
-var addDouble = (arr, x, y, obj) => {
+export var addDouble = (arr, x, y, obj) => {
     if (x > y) console.error("Tried to addDouble with improper coord order");
     if (arr[x] == undefined) arr[x] = [];
     if (arr[x][y] == "placed") return;
     arr[x][y] = obj;
 }
-export
-var removeTriple = (arr, x, y, z) => {
+export var removeTriple = (arr, x, y, z) => {
     console.log('triple to remove ' + arr);
     arr[x][y][z] = "placed";
 }
-export
-var removeDouble = (arr, x, y) => {
+export var removeDouble = (arr, x, y) => {
     arr[x][y] = "placed";
 }
 
 //Fisher-Yates, via mbostock
-export
-function shuffle(array) {
+export function shuffle(array) {
         var m = array.length,
             t, i;
         while (m) {
@@ -619,8 +610,7 @@ function shuffle(array) {
     }
     //array intersection, from stackoverflow question 1885557
 
-export
-function intersect_safe(a, b) {
+export function intersect_safe(a, b) {
     var ai = 0,
         bi = 0;
     var result = new Array();
@@ -642,8 +632,7 @@ function intersect_safe(a, b) {
 
 
 //TODO --- from here down
-export
-function gameOver(game) {
+export function gameOver(game) {
     //check if someone > 10 VP
     game.peekGameState().PlayerStates.forEach((player) => {
         if (player.countVP() >= 10) {
@@ -655,14 +644,12 @@ function gameOver(game) {
 }
 
 
-export
-function determinePlayer(game) {
+export function determinePlayer(game) {
     var players = game.peekGameState().PlayerStates;
     return players[game.peekGameState().turnCount % players.length];
 }
 
-export
-function distributeRes(roll, game) {
+export function distributeRes(roll, game) {
     var playerGains = [];
     game.TokenMap[roll].forEach((hex) => {
         hex.subscribers.forEach((sub) => {
@@ -675,26 +662,22 @@ function distributeRes(roll, game) {
     return playerGains;
 }
 
-export
-function endTurn(player, game) {
+export function endTurn(player, game) {
 	if (game.peekGameState().turnCount == undefined) game.peekGameState().turnCount = 0;
     game.peekGameState().turnCount++;
 }
 
-export
-function endGame(game) {
+export function endGame(game) {
     console.log('game over');
 }
 
-export
-function robberMove(player, game) {
+export function robberMove(player, game) {
     //remove resources if > 7
 
     //
 }
 
-export
-function rollDice(game) {
+export function rollDice(game) {
 	var die1, die2;
 	die1 = Math.floor(Math.random() * 6) + 1;
 	die2 = Math.floor(Math.random() * 6) + 1;
