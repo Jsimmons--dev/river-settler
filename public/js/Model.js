@@ -646,6 +646,7 @@ export function gameOver(game) {
 
 export function determinePlayer(game) {
     var players = game.peekGameState().PlayerStates;
+	console.log(game.peekGameState().turnCount;
     return players[game.peekGameState().turnCount % players.length];
 }
 
@@ -674,7 +675,7 @@ export function endGame(game) {
     console.log('game over');
 }
 
-export function robberMove(player, game) {
+export function robberMove(player, game, hexID) {
     //remove resources if > 7
 	var lostResources = [];
 	game.peekGameState().PlayerStates.forEach((player) => {
@@ -687,7 +688,7 @@ export function robberMove(player, game) {
 		if (numRes > 7){
 			var lostRes = Math.ceil(numRes/2);
 			while (lostRes > 0){
-								
+												
 				lostRes--;
 			}
 		}
@@ -702,3 +703,4 @@ export function rollDice() {
 	die2 = Math.floor(Math.random() * 6) + 1;
 	return die1 + die2;
 }
+
