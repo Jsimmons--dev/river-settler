@@ -688,7 +688,7 @@ export function robberMove(player, game) {
 				lostRes--;
 			}
 		}
-	}
+	});
 
     //
 }
