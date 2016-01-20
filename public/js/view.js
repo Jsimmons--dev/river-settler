@@ -54,9 +54,14 @@ export var textures = [
 
 var moveMeshes = {};
 
-export function renderPiece(model) {
+export function renderPiece(owner,model,game) {
+		console.log('model ',model);
+		console.log(owner);
     var piece = meshes[model.type].clone();
     scene.add(piece);
+	piece.material = new THREE.MeshPhongMaterial({
+		color: game.peekGameState().PlayerStates[owner].color
+	});
     piece.position.set(model.pos[0], model.pos[1], model.pos[2]);
     if (model.rot)
         piece.rotation.set(0, model.rot[1], 0);
@@ -66,7 +71,7 @@ export function renderPiece(model) {
 
 export function renderCity(model, hex) {
     model.scale = [.3, .5, .3];
-    renderPiece(model);
+    renderPiece(model,model);
 }
 
 export function renderSettlement(house, game) {
@@ -75,7 +80,7 @@ export function renderSettlement(house, game) {
     var [x, z] = terraHammer.geomCenter(house.id, game);
     model.pos = [x, 0, z];
     model.scale = [.1, .2, .1];
-    renderPiece(model);
+    renderPiece(house.owner,model,game);
 }
 
 function higherTileOdd(tiles) {
@@ -101,7 +106,7 @@ export function renderRoad(road, game) {
     //  model.rot = rot;
     model.pos = [x, 0, z];
     model.scale = [.15, .15, .15];
-    renderPiece(model);
+    renderPiece(road.owner,model,game);
 }
 export function renderToken(piece){
 	if(piece.token){
