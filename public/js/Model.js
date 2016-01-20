@@ -334,6 +334,7 @@ export var Game = function() {
 }
 
 export var GameState = function(game) {
+	this.robberLoc = 18;
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
@@ -686,13 +687,12 @@ export function robberMove(player, game, hexID) {
 		numRes += player.wool;
 		numRes += player.brick;
 		if (numRes > 7){
-			console.log("entering while");
 			var lostRes = Math.ceil(numRes/2);
 			while (lostRes > 0){
-				var res = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
-				console.log(res);
-				if (player.res > 0) {
-					player.res--;	
+				var rand = Math.floor(Math.random() * game.landTypes.length);
+				var res = game.landTypes[rand];
+				if (player[res] > 0) {
+					player[res]--;	
 				}
 				lostRes--;
 			}
@@ -700,9 +700,11 @@ export function robberMove(player, game, hexID) {
 		}
 	});
 	//move robber to hexID
+	console.log(hexID, game.Hexes[hexID]);
 	game.Hexes[hexID].robber = true;
 	var prevLoc = game.peekGameState().robberLoc;
 	game.peekGameState().robberLoc = hexID;
+	console.log(prevLoc, game.Hexes[prevLoc]);
 	game.Hexes[prevLoc].robber = false;
 	
     //steal random resource from player
@@ -711,7 +713,7 @@ export function robberMove(player, game, hexID) {
 
 		var steal = () => {
 			console.log("stealing");
-			var stealRes = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
+			var stealRes = game.landTypes[Math.floor(Math.random() * game.landTypes.length)];
 			if (owner.stealRes > 0) {
 				owner.stealRes--;
 				player.stealRes++;
