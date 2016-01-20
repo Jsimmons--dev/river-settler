@@ -17,12 +17,14 @@ var devCardPrice = {
     "wool": 1,
     "grain": 1
 }
-export var sort = (array) => {
+export
+var sort = (array) => {
     return array.sort((a, b) => {
         return a - b;
     });
 }
-export var Game = function() {
+export
+var Game = function() {
     this.gameStates = [];
     this.peekGameState = () => {
         return this.gameStates[this.gameStates.length - 1];
@@ -197,13 +199,13 @@ export var Game = function() {
                     }
                 } else {
                     //LAND
-					if (rowLength == middleWidth && (i == middleWidth / 2 || i == (middleWidth -1) / 2)){
-						//desert
-						this.Hexes[tileNum].type = "land";
-						this.Hexes[tileNum].resource = "desert";
-					} else {
-						assignResourceToken(this.Hexes[tileNum]);
-					}
+                    if (rowLength == middleWidth && (i == middleWidth / 2 || i == (middleWidth - 1) / 2)) {
+                        //desert
+                        this.Hexes[tileNum].type = "land";
+                        this.Hexes[tileNum].resource = "desert";
+                    } else {
+                        assignResourceToken(this.Hexes[tileNum]);
+                    }
                     //add edges
                     this.addEdge(tileNum, tileNum - 1, "left");
                     this.addEdge(tileNum, tileNum - rowLength, "topLeft");
@@ -333,11 +335,12 @@ export var Game = function() {
     }
 }
 
-export var GameState = function(game) {
+export
+var GameState = function(game) {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
-	this.turnCount = 0;
+    this.turnCount = 0;
     this.houseEach = (callback) => {
         for (var i = 0; i < this.Houses.length; i++) {
             if (this.Houses[i] !== undefined) {
@@ -354,7 +357,7 @@ export var GameState = function(game) {
         }
     }
 
-   this.roadEach = (callback) => {
+    this.roadEach = (callback) => {
         for (var i = 0; i < this.Roads.length; i++) {
             if (this.Roads[i] !== undefined) {
                 for (var j = 0; j < this.Roads[i].length; j++) {
@@ -402,9 +405,10 @@ export var GameState = function(game) {
     }
 };
 
-export var PlayerState = function(state) {
+export
+var PlayerState = function(state) {
     this.gameState = state; //TODO update this every turn
-    this.id;
+    this.id = state.PlayerStates.length;
     this.houses = [];
     this.roads = [];
     this.pSettlements = [];
@@ -554,30 +558,55 @@ export var PlayerState = function(state) {
             hex.subscribers.push(this.id);
         });
     }
+
+    this.countVP = () => {
+        var VP = 0;
+        this.houses.forEach((house) => {
+            if (house.type == "city") {
+                VP += 2;
+            } else if (house.type == "settlement") {
+                VP++;
+            }
+        });
+		VP += VPCards;
+		if (this.hasLongestRoad){
+			VP += 2;
+		}
+		if (this.hasLargestArmy) {
+			VP += 2;
+		}
+        this.VP = VP;
+        return VP;
+    }
 };
-export var addTriple = (arr, x, y, z, obj) => {
+export
+var addTriple = (arr, x, y, z, obj) => {
     if (x > y || y > z) console.error("Tried to addTriple with improper coord order");
     if (arr[x] == undefined) arr[x] = [];
     if (arr[x][y] == undefined) arr[x][y] = [];
     if (arr[x][y][z] == "placed") return;
     arr[x][y][z] = obj;
 }
-export var addDouble = (arr, x, y, obj) => {
+export
+var addDouble = (arr, x, y, obj) => {
     if (x > y) console.error("Tried to addDouble with improper coord order");
     if (arr[x] == undefined) arr[x] = [];
     if (arr[x][y] == "placed") return;
     arr[x][y] = obj;
 }
-export var removeTriple = (arr, x, y, z) => {
+export
+var removeTriple = (arr, x, y, z) => {
     console.log('triple to remove ' + arr);
     arr[x][y][z] = "placed";
 }
-export var removeDouble = (arr, x, y) => {
+export
+var removeDouble = (arr, x, y) => {
     arr[x][y] = "placed";
 }
 
 //Fisher-Yates, via mbostock
-export function shuffle(array) {
+export
+function shuffle(array) {
         var m = array.length,
             t, i;
         while (m) {
@@ -589,7 +618,8 @@ export function shuffle(array) {
     }
     //array intersection, from stackoverflow question 1885557
 
-export function intersect_safe(a, b) {
+export
+function intersect_safe(a, b) {
     var ai = 0,
         bi = 0;
     var result = new Array();
@@ -611,34 +641,58 @@ export function intersect_safe(a, b) {
 
 
 //TODO --- from here down
-export function gameOver(game){
-	return true;	
+export
+function gameOver(game) {
+    //check if someone > 10 VP
+    game.peekGameState().PlayerStates.forEach((player) => {
+        if (player.countVP() >= 10) {
+            game.Winner = player;
+            return true;
+        }
+    });
+    return false;
 }
 
-export function determinePlayer(game){
-	var players = game.peekGameState().PlayerStates;
-	return players[game.peekGameState().turnCount % players.length];
+
+export
+function determinePlayer(game) {
+    var players = game.peekGameState().PlayerStates;
+    return players[game.peekGameState().turnCount % players.length];
 }
 
-export function distributeRes(roll,game){
-	var playerGains = [];
-	game.TokenMap[roll].forEach((hex) => {
-		hex.subscribers.forEach((sub) => {
-			game.peekGameState().PlayerStates[sub][hex.resource]++;
-			playerGains[sub][hex.resource]++;
-		});
-	});
-	return playerGains;	
+export
+function distributeRes(roll, game) {
+    var playerGains = [];
+    game.TokenMap[roll].forEach((hex) => {
+        hex.subscribers.forEach((sub) => {
+            if (!hex.robber) {
+                game.peekGameState().PlayerStates[sub][hex.resource]++;
+                playerGains[sub][hex.resource]++;
+            }
+        });
+    });
+    return playerGains;
 }
 
-export function endTurn(player,game){
-	game.peekGameState().turnCount++;			
+export
+function endTurn(player, game) {
+	if (game.peekGameState().turnCount == undefined) game.peekGameState().turnCount = 0;
+    game.peekGameState().turnCount++;
 }
 
-export function endGame(game){
-	console.log('game over');	
+export
+function endGame(game) {
+    console.log('game over');
 }
 
-export function robberMove(player, game){
+export
+function robberMove(player, game) {
+    //remove resources if > 7
+
+    //
+}
+
+export
+function rollDice(game) {
 
 }
