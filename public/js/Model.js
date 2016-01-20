@@ -569,7 +569,7 @@ var PlayerState = function(state) {
                 VP++;
             }
         });
-		VP += VPCards;
+		VP += this.VPCards;
 		if (this.hasLongestRoad){
 			VP += 2;
 		}
