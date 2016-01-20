@@ -132,7 +132,7 @@ mirrorMesh.rotation.x = -Math.PI * 0.5;
 mirrorMesh.position.y = -1;
 scene.add(mirrorMesh);
 
-export function render() {
+export function render(game) {
     water.material.uniforms.time.value += 0.05 / 60.0;
     water.render();
     requestAnimationFrame(render);
@@ -140,6 +140,10 @@ export function render() {
 }
 
 //TODO --- from here down
+
+export function gameOver(game){
+
+}
 
 export function nextPlayer(player,game){
 

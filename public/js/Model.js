@@ -606,7 +606,7 @@ export function intersect_safe(a, b) {
 
 //TODO --- from here down
 export function gameOver(game){
-	return false;	
+	return true;	
 }
 
 export function determinePlayer(game){
@@ -619,4 +619,8 @@ export function distributeRes(roll,game){
 
 export function endTurn(player,game){
 			
+}
+
+export function endGame(game){
+	console.log('game over');	
 }
