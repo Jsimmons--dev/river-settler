@@ -2,6 +2,8 @@ import * as model from "./Model";
 import * as view from "./view";
 
 export function startGame(game) {
+	view.renderBoard(game);
+	view.render(game);
     while (!gameOver(game)) {
         var player = determinePlayer(game);
         var roll = rollDice(player, game);
@@ -15,6 +17,10 @@ export function startGame(game) {
         endTurn(player, game);
     }
     runGameOver();
+}
+
+function runGameOver(){
+
 }
 
 function gameOver(game) {
