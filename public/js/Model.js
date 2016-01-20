@@ -686,6 +686,7 @@ export function robberMove(player, game, hexID) {
 		numRes += player.wool;
 		numRes += player.brick;
 		if (numRes > 7){
+			console.log("entering while");
 			var lostRes = Math.ceil(numRes/2);
 			while (lostRes > 0){
 				var res = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
@@ -694,6 +695,7 @@ export function robberMove(player, game, hexID) {
 					lostRes--;
 				}
 			}
+			console.og('exiting while');
 		}
 	});
 	//move robber to hexID
@@ -707,6 +709,7 @@ export function robberMove(player, game, hexID) {
 		var owner = game.Hexes[hexID].subscribers[0];
 
 		var steal = () => {
+			console.log("stealing");
 			var stealRes = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
 			if (owner.stealRes > 0) {
 				owner.stealRes--;
@@ -716,6 +719,7 @@ export function robberMove(player, game, hexID) {
 			}
 		}
 	}
+	console.log("done robber");
 }
 
 export function rollDice() {
