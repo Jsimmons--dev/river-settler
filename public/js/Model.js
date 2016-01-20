@@ -434,7 +434,8 @@ export var PlayerState = function(state) {
             this.removeResources(settlementPrice);
             var newHouse = {
                 id: houseID,
-                type: "settlement"
+                type: "settlement",
+				owner: this.id
             }
             addTriple(this.houses, q, r, s, newHouse);
             //add to gameStates houses
