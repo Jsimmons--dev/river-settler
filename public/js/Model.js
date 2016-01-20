@@ -419,6 +419,7 @@ var PlayerState = function(state) {
     this.wool = 2;
     this.grain = 2;
     this.ore = 0;
+	this.VPCards = 0;
 
     this.buySettlement = (houseTuple) => {
         console.log('making house');
@@ -694,5 +695,8 @@ function robberMove(player, game) {
 
 export
 function rollDice(game) {
-
+	var die1, die2;
+	die1 = Math.floor(Math.random() * 6) + 1;
+	die2 = Math.floor(Math.random() * 6) + 1;
+	return die1 + die2;
 }
