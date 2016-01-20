@@ -5,7 +5,7 @@ import * as view from "./view";
 import * as controller from "./controller";
 import queue from "../../node_modules/queue-async/queue";
 
-var meshQueue = queue(3);
+var meshQueue = queue();
 
 view.geometries.forEach((d) => {
     console.log('loading ' + d[1]);
@@ -38,7 +38,6 @@ meshQueue.awaitAll((error, res) => {
 });
 
 function main() {
-<<<<<<< Updated upstream
    // var board = model.createSimpleBoard([0, 0]);
 	var myGame = new model.Game();
 	myGame.genBoard(4, 7);
@@ -46,28 +45,13 @@ function main() {
 	myGame.pushGameState(gameState);
 	var player0 = new model.PlayerState(gameState);
 	gameState.pushPlayerState(player0);
+	var player1 = new model.PlayerState(gameState);
+	gameState.pushPlayerState(player1);
 	controller.startGame(myGame);
 //	player0.buyRoad([1,6]);
 //	console.log(myGame);
 //	view.renderBoard(myGame);
 //    view.render();
-=======
-    // var board = model.createSimpleBoard([0, 0]);
-    var myGame = new model.Game();
-    myGame.genBoard(4, 7);
-    var gameState = new model.GameState(myGame);
-    myGame.pushGameState(gameState);
-    var player0 = new model.PlayerState(gameState);
-    gameState.pushPlayerState(player0);
-    var player1 = new model.PlayerState(gameState);
-    gameState.pushPlayerState(player1);
-    //do game setup ie first settlements
-    initialTurns(myGame);
-    //start normal turns
-    turn(myGame);
-    view.renderBoard(myGame);
-    view.render();
->>>>>>> Stashed changes
 }
 
 function initialTurns(game) {

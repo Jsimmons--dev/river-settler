@@ -6,8 +6,30 @@ body {
   background:lightgrey;
   width: 98vw;
   height: 97vh;
+  position:absolute;
 }
 
 canvas {
   box-sizing: border-box;
+}
+
+.grainTile {
+	background:url('../assets/Grain_t.png');
+	background-size:127px 128px;
+}
+.oreTile {
+	background:url('../assets/Ore_t.png');
+	background-size:127px 128px;
+}
+.lumberTile {
+	background:url('../assets/Lumber_t.png');
+	background-size:127px 128px;
+}
+.woolTile {
+	background:url('../assets/Wool_t.png');
+	background-size:127px 128px;
+}
+.brickTile {
+	background:url('../assets/Brick_t.png');
+	background-size:127px 128px;
 }
