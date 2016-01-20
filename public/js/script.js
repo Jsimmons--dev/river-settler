@@ -103,8 +103,8 @@ function presetStart(game) {
 	var player1 = game.peekGameState().PlayerStates[1];
 	forceBuySettlement(game, player0, 5, 10, 11);
 	forceBuySettlement(game, player0, 25, 26, 31);
-	forceBuyRoad(game, player0, 26, 31);
-	forceBuyRoad(game, player0, 5, 6);
+	forceBuyRoad(game, player0, 25, 26);
+	forceBuyRoad(game, player0, 10,11);
 	forceBuySettlement(game, player1, 7, 12, 13);
 	forceBuySettlement(game, player1, 23, 24, 29);
 	forceBuyRoad(game, player1, 12, 13);
