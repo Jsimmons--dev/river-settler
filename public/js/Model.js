@@ -652,7 +652,7 @@ export function determinePlayer(game) {
 export function distributeRes(roll, game) {
     var playerGains = [];
 	console.log("in distribRes", "TokenMap", game.TokenMap);
-    game.TokenMap[roll].forEach((hex) => {
+    game.TokenMap[roll].hexes.forEach((hex) => {
         hex.subscribers.forEach((sub) => {
             if (!hex.robber) {
                 game.peekGameState().PlayerStates[sub][hex.resource]++;
@@ -685,7 +685,7 @@ export function robberMove(player, game) {
 		if (numRes > 7){
 			var lostRes = Math.ceil(numRes/2);
 			while (lostRes > 0){
-				
+								
 				lostRes--;
 			}
 		}
