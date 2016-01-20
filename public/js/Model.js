@@ -456,7 +456,8 @@ export var PlayerState = function(state) {
             this.removeResources(cityPrice);
             var newHouse = {
                 id: houseID,
-                type: "city"
+                type: "city",
+				owner: this.id
             }
             addTriple(this.houses, q, r, s, newHouse);
             //add to gameStates houses
@@ -482,7 +483,8 @@ export var PlayerState = function(state) {
             this.removeResources(roadPrice);
             var newRoad = {
                 id: roadID,
-                type: "road"
+                type: "road",
+				owner: this.id
             }
             addDouble(this.roads, u, v, newRoad);
             addDouble(this.gameState.Roads, u, v, newRoad);
