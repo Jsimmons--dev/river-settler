@@ -665,7 +665,6 @@ export function distributeRes(roll, game) {
 export function endTurn(player, game) {
 	if (game.peekGameState().turnCount == undefined) game.peekGameState().turnCount = 0;
     game.peekGameState().turnCount++;
-	console.log("end turn", "turnCount", turnCount);
 }
 
 export function endGame(game) {
@@ -674,7 +673,23 @@ export function endGame(game) {
 
 export function robberMove(player, game) {
     //remove resources if > 7
-	
+	var lostResources = [];
+	game.peekGameState().PlayerStates.forEach((player) => {
+		var numRes = 0;
+		numRes += player.grain;
+		numRes += player.ore;
+		numRes += player.lumber;
+		numRes += player.wool;
+		numRes += player.brick;
+		if (numRes > 7){
+			var lostRes = Math.ceil(numRes/2);
+			while (lostRes > 0){
+				
+				lostRes--;
+			}
+		}
+	}
+
     //
 }
 
