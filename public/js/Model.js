@@ -17,14 +17,16 @@ var devCardPrice = {
     "wool": 1,
     "grain": 1
 }
-var sort = (array) => {
+export var sort = (array) => {
     return array.sort((a, b) => {
         return a - b;
     });
 }
-export var Game = function () {
+export var Game = function() {
     this.gameStates = [];
-	this.peekGameState = ()=>{return this.gameStates[this.gameStates.length-1];};
+    this.peekGameState = () => {
+        return this.gameStates[this.gameStates.length - 1];
+    };
     this.pushGameState = (state) => {
         this.gameStates.push(state);
         return this.gameStates.length - 1;
@@ -310,66 +312,91 @@ export var Game = function () {
         this.Hexes[newHex].edges.push(this.Edges[oldHex][newHex]);
         this.Hexes[oldHex].edges.push(this.Edges[oldHex][newHex]);
         switch (relation) {
-        case "left":
-            this.Hexes[newHex].left = this.Hexes[oldHex];
-            this.Hexes[oldHex].right = this.Hexes[newHex];
-            break;
-        case "topLeft":
-            this.Hexes[newHex].topLeft = this.Hexes[oldHex];
-            this.Hexes[oldHex].bottomRight = this.Hexes[newHex];
-            break;
-        case "topRight":
-            this.Hexes[newHex].topRight = this.Hexes[oldHex];
-            this.Hexes[oldHex].bottomLeft = this.Hexes[newHex];
+            case "left":
+                this.Hexes[newHex].left = this.Hexes[oldHex];
+                this.Hexes[oldHex].right = this.Hexes[newHex];
+                break;
+            case "topLeft":
+                this.Hexes[newHex].topLeft = this.Hexes[oldHex];
+                this.Hexes[oldHex].bottomRight = this.Hexes[newHex];
+                break;
+            case "topRight":
+                this.Hexes[newHex].topRight = this.Hexes[oldHex];
+                this.Hexes[oldHex].bottomLeft = this.Hexes[newHex];
         }
     }
 }
 
-export var GameState = function (game) {
+export var GameState = function(game) {
     this.PlayerStates = [];
     this.Houses = [];
     this.Roads = [];
 
-this.houseEach = (callback) => {
-    for (var i = 0; i < this.Houses.length; i++) {
-        if (this.Houses[i] !== undefined) {
-            for (var j = 0; j < this.Houses[i].length; j++) {
-                if (this.Houses[i][j] !== undefined) {
-                    for (var k = 0; k < this.Houses[i][j].length; k++) {
-                        if (this.Houses[i][j][k] !== undefined) {
-                            callback(this.Houses[i][j][k], game);
+    this.houseEach = (callback) => {
+        for (var i = 0; i < this.Houses.length; i++) {
+            if (this.Houses[i] !== undefined) {
+                for (var j = 0; j < this.Houses[i].length; j++) {
+                    if (this.Houses[i][j] !== undefined) {
+                        for (var k = 0; k < this.Houses[i][j].length; k++) {
+                            if (this.Houses[i][j][k] !== undefined) {
+                                callback(this.Houses[i][j][k], game);
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
 
-this.roadEach = (callback)=> {
-    for (var i = 0; i < this.Roads.length; i++) {
-			console.log(this.Roads[i]);
-        if (this.Roads[i] !== undefined) {
-            for (var j = 0; j < this.Roads[i].length; j++) {
-			console.log(this.Roads[i][j]);
-                if (this.Roads[i][j] !== undefined) {
-                    callback(this.Roads[i][j], game);
+   this.roadEach = (callback) => {
+        for (var i = 0; i < this.Roads.length; i++) {
+            if (this.Roads[i] !== undefined) {
+                for (var j = 0; j < this.Roads[i].length; j++) {
+                    if (this.Roads[i][j] !== undefined) {
+                        callback(this.Roads[i][j], game);
+                    }
                 }
             }
         }
     }
-}
-    this.pushPlayerState = function (state) {
+    this.pushPlayerState = function(state) {
         this.PlayerStates.push(state);
         return this.PlayerStates.length - 1;
     }
     this.updatePlayerpSettlements = (houseTuple) => {
-        //TODO 
+        sort(houseTuple);
+        //TODO done?
         //remove possible houses adjacent to one just purchased
+        //find pHouse elimination coords
+        var [q, r, s] = houseTuple;
+        var intersects = [];
+        intersects.push({
+            x: q,
+            y: r,
+            z: intersect_safe(this.Hexes[q].adj, this.Hexes[r].adj)
+        });
+        intersects.push({
+            x: q,
+            y: s,
+            z: intersect_safe(this.Hexes[q].adj, this.Hexes[s].adj)
+        });
+        intersects.push({
+            x: r,
+            y: s,
+            z: intersect_safe(this.Hexes[r].adj, this.Hexes[s].adj)
+        });
+        this.PlayerStates.forEach((player) => {
+            intersects.forEach((i) => {
+                var [x, y, z] = sort([i.x, i.y, i.z.pop()]); //I know this is terrible, shut up
+                removeTriple(player.pSettlements, x, y, z);
+                [x, y, z] = sort([i.x, i.y, i.z.pop()]);
+                removeTriple(player.pSettlements, x, y, z);
+            });
+        });
     }
 };
 
-export var PlayerState = function (state) {
+export var PlayerState = function(state) {
     this.gameState = state; //TODO update this every turn
     this.id;
     this.houses = [];
@@ -439,7 +466,7 @@ export var PlayerState = function (state) {
         sort(roadTuple);
         var roadID = roadTuple.join("_");
         var [u, v] = roadTuple;
-       // if (this.isPossibleRoad(roadTuple) && this.hasResources(roadPrice)) {
+        if (this.isPossibleRoad(roadTuple) && this.hasResources(roadPrice)) {
             this.removeResources(roadPrice);
             var newRoad = {
                 id: roadID,
@@ -447,26 +474,26 @@ export var PlayerState = function (state) {
             }
             addDouble(this.roads, u, v, newRoad);
             addDouble(this.gameState.Roads, u, v, newRoad);
-            //removeDouble(this.pRoads, u, v);
+            removeDouble(this.pRoads, u, v);
             //add pSettlement
-            //var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj);
-            //var t = intersection.pop();
-            //var pHouseTuple = [t, u, v];
-            //sort(pHouseTuple);
-            //var houseID = pHouseTuple.join("_");
-            //var [q, r, s] = pHouseTuple;
-            //addTriple(this.pSettlements, q, r, s, {
-            //    id: houseID
-            //});
-            //t = intersection.pop();
-            //pHouseTuple = [t, u, v];
-            //sort(pHouseTuple);
-            //houseID = pHouseTuple.join("_");
-			//[q, r, s] = pHouseTuple;
-            //addTriple(this.pSettlements, q, r, s, {
-            //    id: houseID
-            //});
-       // }
+            var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj); //this.gameState.Hexes?
+            var t = intersection.pop();
+            var pHouseTuple = [t, u, v];
+            sort(pHouseTuple);
+            var houseID = pHouseTuple.join("_");
+            var [q, r, s] = pHouseTuple;
+            addTriple(this.pSettlements, q, r, s, {
+                id: houseID
+            });
+            t = intersection.pop();
+            pHouseTuple = [t, u, v];
+            sort(pHouseTuple);
+            houseID = pHouseTuple.join("_");
+            [q, r, s] = pHouseTuple;
+            addTriple(this.pSettlements, q, r, s, {
+                id: houseID
+            });
+        }
     }
     this.addpRoads = (houseTuple) => {
         sort(houseTuple);
@@ -492,15 +519,15 @@ export var PlayerState = function (state) {
         }
     }
     this.hasResources = (price) => {
-		console.log('check if player has resources for purchase');
-		var hasRes;
+        console.log('check if player has resources for purchase');
+        var hasRes;
         for (var res in price) {
             if (this.res < price.res) hasRes = false;
         }
         hasRes = true;
-		var status = (hasRes)?'has':'does not have';
-		console.log('player '+status+' the required resources in '+price);
-		return hasRes;
+        var status = (hasRes) ? 'has' : 'does not have';
+        console.log('player ' + status + ' the required resources in ' + price);
+        return hasRes;
     }
     this.isPossibleHouse = (houseTuple, pHouses) => {
         sort(houseTuple);
@@ -512,8 +539,8 @@ export var PlayerState = function (state) {
             pHouses[q][r][s] == "placed")
             isPossible = false;
         isPossible = true;
-		console.log(houseTuple+' is legal settlement spot');
-		return isPossible;
+        console.log(houseTuple + ' is legal settlement spot');
+        return isPossible;
     }
     this.subscribeToHexes = (houseTuple) => {
         houseTuple.forEach((hex) => {
@@ -522,40 +549,41 @@ export var PlayerState = function (state) {
         });
     }
 };
-var addTriple = (arr, x, y, z, obj) => {
+export var addTriple = (arr, x, y, z, obj) => {
     if (x > y || y > z) console.error("Tried to addTriple with improper coord order");
     if (arr[x] == undefined) arr[x] = [];
     if (arr[x][y] == undefined) arr[x][y] = [];
     if (arr[x][y][z] == "placed") return;
     arr[x][y][z] = obj;
 }
-var addDouble = (arr, x, y, obj) => {
+export var addDouble = (arr, x, y, obj) => {
     if (x > y) console.error("Tried to addDouble with improper coord order");
     if (arr[x] == undefined) arr[x] = [];
     if (arr[x][y] == "placed") return;
     arr[x][y] = obj;
 }
-var removeTriple = (arr, x, y, z) => {
-	console.log('triple to remove '+arr);
+export var removeTriple = (arr, x, y, z) => {
+    console.log('triple to remove ' + arr);
     arr[x][y][z] = "placed";
 }
-var removeDouble = (arr, x, y) => {
+export var removeDouble = (arr, x, y) => {
     arr[x][y] = "placed";
 }
 
 //Fisher-Yates, via mbostock
-function shuffle(array) {
-    var m = array.length,
-        t, i;
-    while (m) {
-        i = Math.floor(Math.random() * m--);
-        t = array[m];
-        array[m] = array[i];
-        array[i] = t;
+export function shuffle(array) {
+        var m = array.length,
+            t, i;
+        while (m) {
+            i = Math.floor(Math.random() * m--);
+            t = array[m];
+            array[m] = array[i];
+            array[i] = t;
+        }
     }
-}
-//array intersection, from stackoverflow question 1885557
-function intersect_safe(a, b) {
+    //array intersection, from stackoverflow question 1885557
+
+export function intersect_safe(a, b) {
     var ai = 0,
         bi = 0;
     var result = new Array();
