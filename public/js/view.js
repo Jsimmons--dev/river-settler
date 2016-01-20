@@ -17,6 +17,17 @@ export var geometries = [
 	   	['hex-desert', '../assets/hex.json'],
 		['port', '../assets/boat.json'],
 		['robber', '../assets/robber.json'],
+		['token-2', '../assets/token.json'],
+		['token-3', '../assets/token.json'],
+		['token-4', '../assets/token.json'],
+		['token-5', '../assets/token.json'],
+		['token-6', '../assets/token.json'],
+		['token-7', '../assets/token.json'],
+		['token-8', '../assets/token.json'],
+		['token-9', '../assets/token.json'],
+		['token-10', '../assets/token.json'],
+		['token-11', '../assets/token.json'],
+		['token-12', '../assets/token.json'],
 ['settlement', '../assets/house.json'],
 ['city', '../assets/city.json'],
 ['road', '../assets/road.json']
@@ -27,7 +38,18 @@ export var textures = [
 	   	['hex-lumber', '../assets/Lumber.png'],
 	   	['hex-wool', '../assets/Wool.png'],
 	   	['hex-desert', '../assets/Desert.png'],
-	   	['hex-brick', '../assets/Brick.png']
+	   	['hex-brick', '../assets/Brick.png'],
+	   	['token-2', '../assets/two.png'],
+	   	['token-3', '../assets/three.png'],
+	   	['token-4', '../assets/four.png'],
+	   	['token-5', '../assets/five.png'],
+	   	['token-6', '../assets/six.png'],
+	   	['token-7', '../assets/seven.png'],
+	   	['token-8', '../assets/eight.png'],
+	   	['token-9', '../assets/nine.png'],
+	   	['token-10', '../assets/ten.png'],
+	   	['token-11', '../assets/eleven.png'],
+	   	['token-12', '../assets/twelve.png']
 ];
 
 var moveMeshes = {};
@@ -81,6 +103,16 @@ export function renderRoad(road, game) {
     model.scale = [.15, .15, .15];
     renderPiece(model);
 }
+export function renderToken(piece){
+	if(piece.token){
+		var token = meshes['token-'+piece.token].clone();
+		scene.add(token);
+		token.position.set(piece.x,0,piece.y*.77);
+		token.scale.set(.1,.1,.1);
+	}
+}
+	
+
 
 export function renderHex(piece) {
     if (piece.type !== 'water') {
@@ -119,6 +151,7 @@ function renderRobber(game){
 export function renderBoard(game) {
     game.Hexes.forEach((d) => {
         renderHex(d);
+		renderToken(d);
     });
     game.peekGameState()
         .houseEach(renderSettlement);

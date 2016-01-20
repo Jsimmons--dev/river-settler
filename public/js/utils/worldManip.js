@@ -28,7 +28,7 @@ export function geomCenter(id, game) {
     ids.forEach((d,i) => {
         points[i] = [
             game.Hexes[d].x,
-            game.Hexes[d].y
+            game.Hexes[d].y*.77
         ]
     });
 	console.log('points init '+points);
