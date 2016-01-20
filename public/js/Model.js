@@ -690,12 +690,13 @@ export function robberMove(player, game, hexID) {
 			var lostRes = Math.ceil(numRes/2);
 			while (lostRes > 0){
 				var res = game.landTypes[Math.floor(Math.random * game.landTypes.length)];
+				console.log(res);
 				if (player.res > 0) {
 					player.res--;	
-					lostRes--;
 				}
+				lostRes--;
 			}
-			console.og('exiting while');
+			console.log('exiting while');
 		}
 	});
 	//move robber to hexID
