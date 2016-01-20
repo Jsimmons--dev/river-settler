@@ -44,8 +44,10 @@ function main() {
 	var gameState = new model.GameState(myGame);
 	myGame.pushGameState(gameState);
 	var player0 = new model.PlayerState(gameState);
+	player0.color = 'orange';
 	gameState.pushPlayerState(player0);
 	var player1 = new model.PlayerState(gameState);
+	player1.color = 'blue';
 	gameState.pushPlayerState(player1);
 	controller.startGame(myGame);
 //	player0.buyRoad([1,6]);

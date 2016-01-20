@@ -1,7 +1,3 @@
-* {
-  outline: 2px solid salmon;
-}
-
 body {
   background:lightgrey;
   width: 98vw;
@@ -13,23 +9,57 @@ canvas {
   box-sizing: border-box;
 }
 
+.frosted::before {
+	content: '';
+	filter: blur(20px);
+	background:hsla(0,10%,90%,.8);
+	position:absolute;
+	top:15px;
+	right:20px;
+	bottom:30px;
+	left:20px;
+	border-radius:10px;
+}
+.frosted {
+	text-align:center;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+}
+
+.frosted > p {
+		z-index:10;
+}
+
 .grainTile {
 	background:url('../assets/Grain_t.png');
-	background-size:127px 128px;
+	background-size:64px 64px;
 }
 .oreTile {
 	background:url('../assets/Ore_t.png');
-	background-size:127px 128px;
+	background-size:64px 64px;
 }
 .lumberTile {
 	background:url('../assets/Lumber_t.png');
-	background-size:127px 128px;
+	background-size:64px 64px;
 }
 .woolTile {
 	background:url('../assets/Wool_t.png');
-	background-size:127px 128px;
+	background-size:64px 64px;
 }
 .brickTile {
 	background:url('../assets/Brick_t.png');
-	background-size:127px 128px;
+	background-size:64px 64px;
 }
+
+#playerCounter{
+text-align:center;
+width:200px;
+position:absolute;
+top:-96vh;
+z-index:2;
+	border-radius:10px;
+}
+
+
+

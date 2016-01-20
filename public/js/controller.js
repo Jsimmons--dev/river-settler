@@ -55,7 +55,7 @@ function rollDice(player, game) {
 }
 
 function robberMove(player, game) {
-    var robberMoved = model.robberMove(player, game,Math.floor(Math.random()*36)); //pair of where he was and is	e.g. [0,3]
+    var robberMoved = model.robberMove(player, game,Math.floor(Math.random()*36));
     view.moveRobber(robberMoved, game);
 	buyPhase(player, game);
 }
