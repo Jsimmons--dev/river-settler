@@ -197,7 +197,13 @@ export var Game = function() {
                     }
                 } else {
                     //LAND
-                    assignResourceToken(this.Hexes[tileNum]);
+					if (rowLength == middleWidth && (i == middleWidth / 2 || i == (middleWidth -1) / 2)){
+						//desert
+						this.Hexes[tileNum].type = "land";
+						this.Hexes[tileNum].resource = "desert";
+					} else {
+						assignResourceToken(this.Hexes[tileNum]);
+					}
                     //add edges
                     this.addEdge(tileNum, tileNum - 1, "left");
                     this.addEdge(tileNum, tileNum - rowLength, "topLeft");
@@ -631,4 +637,8 @@ export function endTurn(player,game){
 
 export function endGame(game){
 	console.log('game over');	
+}
+
+export function robberMove(player, game){
+
 }
