@@ -1,3 +1,4 @@
+var curGame; //hacky, fix anywhere that uses this
 var settlementPrice = {
     "brick": 1,
     "lumber": 1,
@@ -23,6 +24,7 @@ export var sort = (array) => {
     });
 }
 export var Game = function() {
+	curGame = this;
     this.gameStates = [];
     this.peekGameState = () => {
         return this.gameStates[this.gameStates.length - 1];
@@ -372,6 +374,7 @@ export var GameState = function(game) {
     }
     this.updatePlayerpSettlements = (houseTuple) => {
         sort(houseTuple);
+		console.log("updating all player p settlements");
         //TODO done?
         //remove possible houses adjacent to one just purchased
         //find pHouse elimination coords
@@ -380,17 +383,17 @@ export var GameState = function(game) {
         intersects.push({
             x: q,
             y: r,
-            z: intersect_safe(this.Hexes[q].adj, this.Hexes[r].adj)
+            z: intersect_safe(curGame.Hexes[q].adj, curGame.Hexes[r].adj)
         });
         intersects.push({
             x: q,
             y: s,
-            z: intersect_safe(this.Hexes[q].adj, this.Hexes[s].adj)
+            z: intersect_safe(curGame.Hexes[q].adj, curGame.Hexes[s].adj)
         });
         intersects.push({
             x: r,
             y: s,
-            z: intersect_safe(this.Hexes[r].adj, this.Hexes[s].adj)
+            z: intersect_safe(curGame.Hexes[r].adj, curGame.Hexes[s].adj)
         });
         this.PlayerStates.forEach((player) => {
             intersects.forEach((i) => {
@@ -484,7 +487,7 @@ export var PlayerState = function(state) {
             addDouble(this.gameState.Roads, u, v, newRoad);
             removeDouble(this.pRoads, u, v);
             //add pSettlement
-            var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj); //this.gameState.Hexes?
+            var intersection = intersect_safe(curGame.Hexes[u].adj, curGame.Hexes[v].adj); //this.gameState.Hexes?
             var t = intersection.pop();
             var pHouseTuple = [t, u, v];
             sort(pHouseTuple);
@@ -544,14 +547,32 @@ export var PlayerState = function(state) {
         if (pHouses[q] == undefined ||
             pHouses[q][r] == undefined ||
             pHouses[q][r][s] == undefined ||
-            pHouses[q][r][s] == "placed")
+            pHouses[q][r][s] == "placed") {
             isPossible = false;
-        isPossible = true;
-        console.log(houseTuple + ' is legal settlement spot');
+		} else {
+			isPossible = true;
+			console.log(houseTuple + ' is legal settlement spot');
+		}
         return isPossible;
     }
+
+	this.isPossibleRoad = (roadTuple) => {
+		sort(roadTuple);
+		var isPossible;
+		var pRoads = this.pRoads;
+		var [u, v] = roadTuple;
+		if (pRoads[u] == undefined || pRoads[u][v]  == undefined || pRoads[u][v] == "placed"){
+			isPossible = false;
+		} else {
+			isPossible = true;
+			console.log(roadTuple + ' is a legal road spot');
+		}
+		return isPossible;
+	}
+
     this.subscribeToHexes = (houseTuple) => {
-        houseTuple.forEach((hex) => {
+        houseTuple.forEach((hexID) => {
+			var hex = curGame.Hexes[hexID];
             if (hex.subscribers == undefined) hex.subscribers = [];
             hex.subscribers.push(this.id);
         });
@@ -579,10 +600,11 @@ export var PlayerState = function(state) {
 };
 export var addTriple = (arr, x, y, z, obj) => {
     if (x > y || y > z) console.error("Tried to addTriple with improper coord order");
-    if (arr[x] == undefined) arr[x] = [];
-    if (arr[x][y] == undefined) arr[x][y] = [];
-    if (arr[x][y][z] == "placed") return;
+    if (arr[x] == undefined) {arr[x] = [];}
+    if (arr[x][y] == undefined) {arr[x][y] = [];}
+    if (arr[x][y][z] == "placed") {return;}
     arr[x][y][z] = obj;
+	console.log("addedTriple");
 }
 export var addDouble = (arr, x, y, obj) => {
     if (x > y) console.error("Tried to addDouble with improper coord order");
@@ -591,10 +613,15 @@ export var addDouble = (arr, x, y, obj) => {
     arr[x][y] = obj;
 }
 export var removeTriple = (arr, x, y, z) => {
-    console.log('triple to remove ' + arr);
+    if (x > y || y > z) console.error("Tried to addTriple with improper coord order");
+    if (arr[x] == undefined) arr[x] = [];
+    if (arr[x][y] == undefined) arr[x][y] = [];
+    console.log('triple to remove ',  arr);
     arr[x][y][z] = "placed";
 }
 export var removeDouble = (arr, x, y) => {
+    if (x > y) console.error("Tried to addDouble with improper coord order");
+    if (arr[x] == undefined) arr[x] = [];
     arr[x][y] = "placed";
 }
 
@@ -659,6 +686,7 @@ export function distributeRes(roll, game) {
         hex.subscribers.forEach((sub) => {
             if (!hex.robber) {
                 game.peekGameState().PlayerStates[sub][hex.resource]++;
+				if(playerGains[sub] == undefined) playerGains[sub] = {};
                 playerGains[sub][hex.resource]++;
             }
         });

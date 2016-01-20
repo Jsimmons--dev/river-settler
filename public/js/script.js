@@ -49,6 +49,7 @@ function main() {
 	var player1 = new model.PlayerState(gameState);
 	player1.color = 'blue';
 	gameState.pushPlayerState(player1);
+	presetStart(myGame);
 	controller.startGame(myGame);
 //	player0.buyRoad([1,6]);
 //	console.log(myGame);
@@ -95,4 +96,33 @@ function initialTurns(game) {
 	//click to place house
 	
 	//
+}
+
+function presetStart(game) {
+	var player0 = game.peekGameState().PlayerStates[0];
+	var player1 = game.peekGameState().PlayerStates[1];
+	forceBuySettlement(game, player0, 5, 10, 11);
+	forceBuySettlement(game, player0, 25, 26, 31);
+	forceBuyRoad(game, player0, 26, 31);
+	forceBuyRoad(game, player0, 5, 6);
+	forceBuySettlement(game, player1, 7, 12, 13);
+	forceBuySettlement(game, player1, 23, 24, 29);
+	forceBuyRoad(game, player1, 12, 13);
+	forceBuyRoad(game, player1, 23, 24);
+
+
+}
+
+function forceBuySettlement (game,player, x, y, z) {
+	var pSettlements = player.pSettlements;
+	if (pSettlements[x] == undefined) pSettlements[x] = [];
+	if (pSettlements[x][y] == undefined) pSettlements[x][y] = [];
+	if (pSettlements[x][y][z] == undefined) pSettlements[x][y][z] = {};
+	player.buySettlement([x,y,z]);
+}
+function forceBuyRoad (game,player, x, y) {
+	var pRoads = player.pRoads;
+	if (pRoads[x] == undefined) pRoads[x] = [];
+	if (pRoads[x][y] == undefined) pRoads[x][y] = {};
+	player.buyRoad([x,y]);
 }
