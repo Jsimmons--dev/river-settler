@@ -28,6 +28,7 @@ export function renderPiece(model) {
     piece.scale.set(model.scale[0], model.scale[1], model.scale[2]);
     return piece;
 }
+
 export function renderCity(model) {
     model.scale = [.3, .5, .3];
     renderPiece(model);
@@ -54,15 +55,16 @@ function sameX(tiles) {
 function tilesSameLevel(tiles) {
     return tiles[0].pos[2] === tiles[1].pos[2];
 }
-export function renderRoad(tiles) {
+export function renderRoad(road,game) {
     var model = {};
     model.type = 'road';
-    model.pos = terraHammer.getRoadPos(tiles[0].pos, tiles[1].pos);
-    var rot = (tilesSameLevel(tiles)) ? [0, 0, 0] : (sameX(tiles)) ? [0, 65 * Math.PI / 180, 0] : [0, -65 * Math.PI / 180, 0];
-    if (!higherTileOdd(tiles)) {
-        rot[1] = -rot[1];
-    }
-    model.rot = rot;
+    var [x,z] = terraHammer.geomCenter(road.id,game);
+    //var rot = (tilesSameLevel(tiles)) ? [0, 0, 0] : (sameX(tiles)) ? [0, 65 * Math.PI / 180, 0] : [0, -65 * Math.PI / 180, 0];
+  //  if (!higherTileOdd(tiles)) {
+  //      rot[1] = -rot[1];
+  //  }
+  //  model.rot = rot;
+  model.pos = [x,0,z];
     model.scale = [.15, .15, .15];
     renderPiece(model);
 }
@@ -82,6 +84,7 @@ export function renderBoard(game) {
         renderHex(d);
     });
     game.peekGameState().houseEach(renderSettlement);
+    game.peekGameState().roadEach(renderRoad);
 }
 
 export var camera = new THREE.PerspectiveCamera(75,
@@ -134,4 +137,28 @@ export function render() {
     water.render();
     requestAnimationFrame(render);
     renderer.render(scene, camera);
+}
+
+//TODO --- from here down
+
+export function nextPlayer(player,game){
+
+}
+
+export function askForDiceRoll(player,game){
+    //var dice = model.rollDice(player, game); //return pair array e.g. [1,5]
+    //rollDice(dice, game);
+	return [2,4];
+}
+
+export function renderResourceDistribution(resources,game){
+
+}
+
+export function startBuyPhase(player,game){
+		
+}
+
+export function showEndOfTurn(player,game){
+		
 }

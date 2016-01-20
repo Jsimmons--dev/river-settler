@@ -40,4 +40,4 @@ export function createSimpleBoard(pos){
 }
 
 export var hexTypes = types;
-console.log(hexTypes);
+

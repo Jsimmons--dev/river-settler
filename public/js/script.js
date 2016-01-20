@@ -45,9 +45,10 @@ function main() {
 	myGame.pushGameState(gameState);
 	var player0 = new model.PlayerState(gameState);
 	gameState.pushPlayerState(player0);
-	player0.buyCity([1,2,6]);
-	console.log(myGame);
-	view.renderBoard(myGame);
-    view.render();
+	controller.startGame(myGame);
+//	player0.buyRoad([1,6]);
+//	console.log(myGame);
+//	view.renderBoard(myGame);
+//    view.render();
 }
 

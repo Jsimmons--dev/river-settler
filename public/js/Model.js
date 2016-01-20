@@ -348,8 +348,10 @@ this.houseEach = (callback) => {
 
 this.roadEach = (callback)=> {
     for (var i = 0; i < this.Roads.length; i++) {
+			console.log(this.Roads[i]);
         if (this.Roads[i] !== undefined) {
             for (var j = 0; j < this.Roads[i].length; j++) {
+			console.log(this.Roads[i][j]);
                 if (this.Roads[i][j] !== undefined) {
                     callback(this.Roads[i][j], game);
                 }
@@ -437,34 +439,34 @@ export var PlayerState = function (state) {
         sort(roadTuple);
         var roadID = roadTuple.join("_");
         var [u, v] = roadTuple;
-        if (this.isPossibleRoad(roadTuple) && this.hasResources(roadPrice)) {
+       // if (this.isPossibleRoad(roadTuple) && this.hasResources(roadPrice)) {
             this.removeResources(roadPrice);
             var newRoad = {
                 id: roadID,
                 type: "road"
             }
             addDouble(this.roads, u, v, newRoad);
-            addDouble(this.gameState.Houses, u, v);
+            addDouble(this.gameState.Roads, u, v, newRoad);
             //removeDouble(this.pRoads, u, v);
             //add pSettlement
-            var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj);
-            var t = intersection.pop();
-            var pHouseTuple = [t, u, v];
-            sort(pHouseTuple);
-            var houseID = pHouseTuple.join("_");
-            var [q, r, s] = pHouseTuple;
-            addTriple(this.pSettlements, q, r, s, {
-                id: houseID
-            });
-            t = intersection.pop();
-            pHouseTuple = [t, u, v];
-            sort(pHouseTuple);
-            houseID = pHouseTuple.join("_");
-			[q, r, s] = pHouseTuple;
-            addTriple(this.pSettlements, q, r, s, {
-                id: houseID
-            });
-        }
+            //var intersection = intersect_safe(this.Hexes[u].adj, this.Hexes[v].adj);
+            //var t = intersection.pop();
+            //var pHouseTuple = [t, u, v];
+            //sort(pHouseTuple);
+            //var houseID = pHouseTuple.join("_");
+            //var [q, r, s] = pHouseTuple;
+            //addTriple(this.pSettlements, q, r, s, {
+            //    id: houseID
+            //});
+            //t = intersection.pop();
+            //pHouseTuple = [t, u, v];
+            //sort(pHouseTuple);
+            //houseID = pHouseTuple.join("_");
+			//[q, r, s] = pHouseTuple;
+            //addTriple(this.pSettlements, q, r, s, {
+            //    id: houseID
+            //});
+       // }
     }
     this.addpRoads = (houseTuple) => {
         sort(houseTuple);
@@ -571,4 +573,22 @@ function intersect_safe(a, b) {
     }
 
     return result;
+}
+
+
+//TODO --- from here down
+export function gameOver(game){
+	return false;	
+}
+
+export function determinePlayer(game){
+	return	game.peekGameState().PlayerStates[0];
+}
+
+export function distributeRes(roll,game){
+	return	[{},{'grain':2}]; 
+}
+
+export function endTurn(player,game){
+			
 }
