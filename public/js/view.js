@@ -58,7 +58,7 @@ export function renderPiece(owner, model, game, color) {
     console.log('model ', model);
     console.log(owner);
     var piece = meshes[model.type].clone();
-	piece.model = model;
+    piece.model = model;
     scene.add(piece);
     if (color === undefined) {
         color = game.peekGameState().PlayerStates[owner].color
@@ -81,7 +81,7 @@ export function renderCity(model, hex) {
 export function renderSettlement(house, game, color) {
     //optional color for pSettlements
     var model = {};
-	model.house = house;
+    model.house = house;
     model.type = house.type;
     model.possible = house.possible;
     var [x, z] = terraHammer.geomCenter(house.id, game);
@@ -326,12 +326,15 @@ export function startBuyPhase(player, turn, game) {
             //if click on possible mesh, try to buy it
             attachClick((mesh) => {
                 console.log(mesh);
-                if (mesh.possibleSettlement) {
-                    console.log(mesh.house);
-                    var houseTuple = mesh.house.id.split('_');
+                if (mesh.model && mesh.model.possible) {
+                    console.log(mesh.model.house);
+                    var houseTuple = mesh.model.house.id.split('_');
                     player.buySettlement(houseTuple);
                     $('#cancel').remove();
                     removepMeshes();
+										
+					game.peekGameState()
+						.houseEach(renderSettlement);
                 }
             });
         });
@@ -357,12 +360,20 @@ export function startBuyPhase(player, turn, game) {
     $('#buyRoad')[0].style.left = 50 + 'vw';
 }
 
+function removepMeshes(game) {
+	scene.children.forEach((child) => {
+		if (child.model && child.model.house && child.model.house.possible) {
+			console.log("found p house", child);
+			scene.remove(child);
+		}
+	});
+}
 function addpSettlements(player, game) {
     var renderpSettlement = (house, game) => {
-		console.log(house);
+        console.log(house);
         if (house != "placed") {
             house.possible = true;
-			console.log("calling renderSettlement on house", house);
+            console.log("calling renderSettlement on house", house);
             renderSettlement(house, game, 0xffffff);
         }
     }
@@ -376,21 +387,22 @@ export function moveRobber(movePair, game) {
     moveMeshes['robber'].position.set(robberLoc.x, 0, robberLoc.y * .77);
 }
 export function attachClick(callback) {
-        var raycaster = new THREE.Raycaster();
-        var projector = new THREE.Projector();
-        var directionVector = new THREE.Vector3();
+        //var projector = new THREE.Projector();
+        //var directionVector = new THREE.Vector3();
 
         document.querySelector('canvas').addEventListener("click", function(evt) {
+			var raycaster = new THREE.Raycaster();
             var SCREEN_WIDTH = window.innerWidth * .985;
             var SCREEN_HEIGHT = window.innerHeight * .98;
             var x = (evt.clientX / SCREEN_WIDTH) * 2 - 1;
             var y = -(evt.clientY / SCREEN_HEIGHT) * 2 + 1;
 
-            directionVector.set(x, y, 1);
-            projector.unprojectVector(directionVector, camera);
-            directionVector.sub(camera.position);
-            directionVector.normalize();
-            raycaster.set(camera.position, directionVector);
+            //directionVector.set(x, y, 1);
+            //projector.unprojectVector(directionVector, camera);
+            //directionVector.sub(camera.position);
+            //directionVector.normalize();
+            //raycaster.set(camera.position, directionVector);
+			raycaster.setFromCamera(mouse, camera);
             var intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length) {
                 var target = intersects[0].object;
@@ -400,3 +412,16 @@ export function attachClick(callback) {
 
     }
     //attachClick();
+
+
+var mouse = new THREE.Vector2();
+function onMouseMove( event ) {
+
+	// calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;		
+
+}
+window.addEventListener('mousemove', onMouseMove, false);
