@@ -290,16 +290,42 @@ export function renderResourceDistribution(resources, game) {
 export function startBuyPhase(player, turn, game) {
     var gui = $('body > gui')
         .append('<button id="endTurn">end</button>')
+        .append('<button id="buySettlement">Buy Settlement</button>')
+        .append('<button id="buyRoad">Buy Road</button>')
 
 		$('#endTurn')
         .button()
         .click((e) => {
             turn(game); //return pair array e.g. [1,5]
         });
+		$('#buySettlement')
+        .button()
+        .click((e) => {
+			attachClick((mesh)=>{
+				console.log(mesh);	
+			});
+            //turn(game); //return pair array e.g. [1,5]
+        });
+		$('#buyRoad')
+        .button()
+        .click((e) => {
+			attachClick((mesh)=>{
+				
+			});
+            //turn(game); //return pair array e.g. [1,5]
+        });
 
 	$('#endTurn')[0].style.position ='absolute';
 	$('#endTurn')[0].style.top = -98 + 'vh';
 	$('#endTurn')[0].style.left = 70 + 'vw';
+
+	$('#buySettlement')[0].style.position ='absolute';
+	$('#buySettlement')[0].style.top = -98 + 'vh';
+	$('#buySettlement')[0].style.left = 60 + 'vw';
+
+	$('#buyRoad')[0].style.position ='absolute';
+	$('#buyRoad')[0].style.top = -98 + 'vh';
+	$('#buyRoad')[0].style.left = 50 + 'vw';
 }
 
 export function showEndOfTurn(player, endTurn, game) {
@@ -333,4 +359,4 @@ export function attachClick(callback) {
 	}, false);
 
 }
-attachClick();
+//attachClick();
