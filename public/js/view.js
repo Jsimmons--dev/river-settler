@@ -236,11 +236,29 @@ export function gameOver(game) {
 
 }
 
+function GUI(){
+	$('body').append('<gui></gui>');
+	var gui = $('gui')[0];
+	gui.style.position = 'absolute';
+	gui.style.top = 0;
+	
+	this.drawPlayerCounter = ()=>{
+   		 this.playerCounter = $('<div id="playerCounter"></div>')[0];
+   		 $('body > gui').append(this.playerCounter);
+			
+	}
+	this.updatePlayerCounter = (player)=>{
+		this.playerCounter.innerHTML = "It's player " + player.id + "'s turn";	
+		this.playerCounter.background = player.color;
+	}
+}
+
 export function nextPlayer(player, game) {
     $('body > gui').remove();
     $('body').append('<gui></gui>');
     var gui = $('gui')[0];
     gui.style.position = 'absolute';
+    gui.style.top = '0';
     var counter = $('<div id="playerCounter"></div>')[0];
     counter.innerHTML = "it's player " + player.id + "'s turn";
     counter.style.background = player.color;
@@ -254,7 +272,6 @@ export function nextPlayer(player, game) {
     function renderTile(name) {
         $('body > gui').append($("<div id='" + name + "' class='" + name + "Tile'></div>"));
         var tile = $('#' + name)[0];
-        tile.style.position = 'absolute';
         tile.style.bottom = 32 + 'px';
         tile.style.left = curSpace + 'px';
         tile.style.width = cardWidth + 'px';
@@ -262,13 +279,11 @@ export function nextPlayer(player, game) {
         curSpace += cardSpace;
         $(tile).append("<div class='frosted'><p>" + player[name] + "</p></div>");
     }
-    console.log(player);
     renderTile('grain');
     renderTile('wool');
     renderTile('brick');
     renderTile('lumber');
     renderTile('ore');
-
 }
 
 export function askForDiceRoll(player, game, rolled, seven) {
@@ -280,7 +295,7 @@ export function askForDiceRoll(player, game, rolled, seven) {
     $('#roll')
         .button()
         .click((e) => {
-            dice = model.rollDice(); //return pair array e.g. [1,5]
+            dice = model.rollDice();
             console.log('dice rolled a ', dice);
             if (dice === 7) seven(player, dice, game);
             else rolled(player, dice, game);
@@ -306,11 +321,10 @@ export function startBuyPhase(player, turn, game) {
     $('#endTurn')
         .button()
         .click((e) => {
-            turn(game); //return pair array e.g. [1,5]
+            turn(game);
         });
     $('#buySettlement').button()
         .click((e) => {
-            //make cancel button
             var exitBuySettlement = () => {
                 $('#cancel').remove();
                 removepMeshes();
@@ -321,9 +335,7 @@ export function startBuyPhase(player, turn, game) {
                     exitBuySettlement();
                 });
 
-            //display possible meshes
             addpSettlements(player, game);
-            //if click on possible mesh, try to buy it
             attachClick((mesh) => {
                 console.log(mesh);
                 if (mesh.model && mesh.model.possible) {
@@ -342,9 +354,7 @@ export function startBuyPhase(player, turn, game) {
         .button()
         .click((e) => {
             attachClick((mesh) => {
-
             });
-            //turn(game); //return pair array e.g. [1,5]
         });
 
     $('#endTurn')[0].style.position = 'absolute';
@@ -387,21 +397,12 @@ export function moveRobber(movePair, game) {
     moveMeshes['robber'].position.set(robberLoc.x, 0, robberLoc.y * .77);
 }
 export function attachClick(callback) {
-        //var projector = new THREE.Projector();
-        //var directionVector = new THREE.Vector3();
-
         document.querySelector('canvas').addEventListener("click", function(evt) {
 			var raycaster = new THREE.Raycaster();
             var SCREEN_WIDTH = window.innerWidth * .985;
             var SCREEN_HEIGHT = window.innerHeight * .98;
             var x = (evt.clientX / SCREEN_WIDTH) * 2 - 1;
             var y = -(evt.clientY / SCREEN_HEIGHT) * 2 + 1;
-
-            //directionVector.set(x, y, 1);
-            //projector.unprojectVector(directionVector, camera);
-            //directionVector.sub(camera.position);
-            //directionVector.normalize();
-            //raycaster.set(camera.position, directionVector);
 			raycaster.setFromCamera(mouse, camera);
             var intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length) {
@@ -411,17 +412,11 @@ export function attachClick(callback) {
         }, false);
 
     }
-    //attachClick();
 
 
 var mouse = new THREE.Vector2();
 function onMouseMove( event ) {
-
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;		
-
 }
 window.addEventListener('mousemove', onMouseMove, false);
