@@ -1,5 +1,5 @@
-import * as model from "./Model";
-import * as view from "./view";
+import * as model from "../model/model";
+import * as view from "../view/view";
 
 export function startGame(game) {
     view.renderBoard(game);

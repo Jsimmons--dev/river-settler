@@ -1,5 +1,5 @@
-import queue from "../../node_modules/queue-async/queue";
-import * as view from "./view";
+import queue from "../../..//node_modules/queue-async/queue";
+import * as view from "../view/view";
 
 export function loader(callback){
 var meshQueue = queue();
