@@ -2,7 +2,7 @@
   "name": "river-settler",
   "version": "0.0.1",
   "description": "game rendered using threejs",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "./run.sh",
 	"model": "./run-model.sh"

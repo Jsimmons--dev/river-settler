@@ -20,5 +20,8 @@ export var types = {
     },
     'desert': {
         color: 0xFFEA7A
-    }
+    },
+	'water': {
+		color: 0x00FF00
+	}
 };

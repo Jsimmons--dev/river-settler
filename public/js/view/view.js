@@ -1,6 +1,6 @@
 "use strict";
-import * as model from "./Model";
-import * as terraHammer from "./utils/worldManip.js";
+import * as model from "../model/model";
+import * as terraHammer from "../utils/worldManip.js";
 
 var scene = new THREE.Scene();
 
