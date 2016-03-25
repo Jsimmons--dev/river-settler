@@ -1,18 +1,19 @@
 import queue from "../../..//node_modules/queue-async/queue";
 import * as view from "../view/view";
+import * as assets from "../view/assetList";
 
 export function loader(callback){
 var meshQueue = queue();
 
-view.geometries.forEach((d) => {
+assets.geometries.forEach((d) => {
     console.log('loading ' + d[1]);
     meshQueue.defer(function(done) {
-        view.meshLoader.load(d[1], (geom, mat) => {
-            var texture = view.textures.filter((e) => {
+        assets.meshLoader.load(d[1], (geom, mat) => {
+            var texture = assets.textures.filter((e) => {
                 return e[0] === d[0]
             })[0];
             if (texture !== undefined) {
-                view.texLoader.load(texture[1], (tex) => {
+                assets.texLoader.load(texture[1], (tex) => {
                     console.log('loading texture for ' + d[0]);
                     view.meshes[d[0]] = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({
                         map: tex

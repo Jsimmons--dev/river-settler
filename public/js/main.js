@@ -3,8 +3,6 @@ import * as model from "./model/model";
 import * as controller from "./controller/controller";
 import * as loader from "./utils/assetLoader";
 
-console.log(loader);
-
 loader.loader(main);
 
 function main() {

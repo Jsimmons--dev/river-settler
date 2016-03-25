@@ -83,6 +83,226 @@
 },{}],2:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.startGame = startGame;
+
+var _model = require("../model/model");
+
+var model = _interopRequireWildcard(_model);
+
+var _view = require("../view/view");
+
+var view = _interopRequireWildcard(_view);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function startGame(game) {
+    view.renderBoard(game);
+    view.render(game);
+    turn(game);
+}
+
+function turn(game) {
+    if (!gameOver(game)) {
+        console.log('determining whose turn');
+        var player = determinePlayer(game);
+        console.log('rolling the die');
+        var roll = rollDice(player, game);
+        endTurn(player, game);
+    } else {
+        runGameOver();
+    }
+}
+
+function rolled(player, dice, game) {
+    console.log("distributing resources");
+    resourceDistribution(player, dice, game);
+}
+
+function rolledSeven(player, dice, game) {
+    console.log('moving robber');
+    robberMove(player, game);
+}
+
+function runGameOver() {}
+
+function gameOver(game) {
+    var over = model.gameOver(game);
+    if (over) {
+        view.gameOver(game);
+        model.endGame(game);
+    }
+    return over;
+}
+
+function determinePlayer(game) {
+    var player = model.determinePlayer(game);
+    console.log('player ', player);
+    view.nextPlayer(player, game);
+    return player;
+}
+
+function rollDice(player, game) {
+    var dice = view.askForDiceRoll(player, game, rolled, rolledSeven);
+    return dice;
+}
+
+function robberMove(player, game) {
+    var robberMoved = model.robberMove(player, game, Math.floor(Math.random() * 36));
+    view.moveRobber(robberMoved, game);
+    buyPhase(player, game);
+}
+
+function steal(player, game) {
+    var stealee = model.steal(player, game);
+    view.stoleFrom(player, stealee, game);
+    buyPhase(player, game);
+}
+
+function resourceDistribution(player, roll, game) {
+    var resources = model.distributeRes(roll, game); //array of objects showing
+    //how many of each were given to that player e.g. [{},{'grain':2}] mean
+    //player 1 got nothing and player 2 got two grains
+    view.renderResourceDistribution(resources, game);
+    console.log('resources returned');
+    buyPhase(player, game);
+}
+
+function buyPhase(player, game) {
+    console.log('in buying phase');
+    view.startBuyPhase(player, turn, game);
+}
+
+function endTurn(player, game) {
+    model.endTurn(player, game);
+    view.showEndOfTurn(player, game);
+}
+
+},{"../model/model":4,"../view/view":8}],3:[function(require,module,exports){
+"use strict";
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _model = require("./model/model");
+
+var model = _interopRequireWildcard(_model);
+
+var _controller = require("./controller/controller");
+
+var controller = _interopRequireWildcard(_controller);
+
+var _assetLoader = require("./utils/assetLoader");
+
+var loader = _interopRequireWildcard(_assetLoader);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+loader.loader(main);
+
+function main() {
+				var myGame = new model.Game();
+				myGame.genBoard(4, 7);
+				var gameState = new model.GameState(myGame);
+				myGame.pushGameState(gameState);
+				var player0 = new model.PlayerState(gameState);
+				player0.color = 'orange';
+				gameState.pushPlayerState(player0);
+				var player1 = new model.PlayerState(gameState);
+				player1.color = 'blue';
+				gameState.pushPlayerState(player1);
+				presetStart(myGame);
+				controller.startGame(myGame);
+}
+
+function initialTurns(game) {
+				var _this = this;
+
+				if (game.turnCount == undefined) game.turnCount = 0;
+				if (game.globalpHouses == undefined) game.globalpHouses = game.Vertices;
+				var state = game.peekGameState();
+				var player = state.PlayerStates[game.turnCount % state.PlayerStates.length];
+				var updatepHouses = function updatepHouses(houseTuple) {
+								Model.sort(houseTuple);
+
+								var _houseTuple = _slicedToArray(houseTuple, 3);
+
+								var q = _houseTuple[0];
+								var r = _houseTuple[1];
+								var s = _houseTuple[2];
+
+								var intersects = [];
+								intersects.push({
+												x: q,
+												y: r,
+												z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[r].adj)
+								});
+								intersects.push({
+												x: q,
+												y: s,
+												z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[s].adj)
+								});
+								intersects.push({
+												x: r,
+												y: s,
+												z: Model.intersect_safe(_this.Hexes[r].adj, _this.Hexes[s].adj)
+								});
+								intersects.forEach(function (i) {
+												var _sort = sort([i.x, i.y, i.z.pop()]);
+
+												var _sort2 = _slicedToArray(_sort, 3);
+
+												var x = _sort2[0];
+												var y = _sort2[1];
+												var z = _sort2[2];
+
+												Model.removeTriple(game.globalpHouses, x, y, z);
+
+												var _sort3 = sort([i.x, i.y, i.z.pop()]);
+
+												var _sort4 = _slicedToArray(_sort3, 3);
+
+												x = _sort4[0];
+												y = _sort4[1];
+												z = _sort4[2];
+
+												Model.removeTriple(game.globalpHouses, x, y, z);
+								});
+				};
+}
+
+function presetStart(game) {
+				var player0 = game.peekGameState().PlayerStates[0];
+				var player1 = game.peekGameState().PlayerStates[1];
+				forceBuySettlement(game, player0, 5, 10, 11);
+				forceBuySettlement(game, player0, 25, 26, 31);
+				forceBuyRoad(game, player0, 25, 26);
+				forceBuyRoad(game, player0, 10, 11);
+				forceBuySettlement(game, player1, 7, 12, 13);
+				forceBuySettlement(game, player1, 23, 24, 29);
+				forceBuyRoad(game, player1, 12, 13);
+				forceBuyRoad(game, player1, 23, 24);
+}
+
+function forceBuySettlement(game, player, x, y, z) {
+				var pSettlements = player.pSettlements;
+				if (pSettlements[x] == undefined) pSettlements[x] = [];
+				if (pSettlements[x][y] == undefined) pSettlements[x][y] = [];
+				if (pSettlements[x][y][z] == undefined) pSettlements[x][y][z] = {};
+				player.buySettlement([x, y, z]);
+}
+
+function forceBuyRoad(game, player, x, y) {
+				var pRoads = player.pRoads;
+				if (pRoads[x] == undefined) pRoads[x] = [];
+				if (pRoads[x][y] == undefined) pRoads[x][y] = {};
+				player.buyRoad([x, y]);
+}
+
+},{"./controller/controller":2,"./model/model":4,"./utils/assetLoader":5}],4:[function(require,module,exports){
+"use strict";
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 Object.defineProperty(exports, "__esModule", {
@@ -992,7 +1212,7 @@ var adjIntersection = exports.adjIntersection = function adjIntersection(u, v) {
     return intersection;
 };
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1000,13 +1220,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.loader = loader;
 
-var _queue = require("../../node_modules/queue-async/queue");
+var _queue = require("../../..//node_modules/queue-async/queue");
 
 var _queue2 = _interopRequireDefault(_queue);
 
-var _view = require("./view");
+var _view = require("../view/view");
 
 var view = _interopRequireWildcard(_view);
+
+var _assetList = require("../view/assetList");
+
+var assets = _interopRequireWildcard(_assetList);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -1015,15 +1239,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function loader(callback) {
     var meshQueue = (0, _queue2.default)();
 
-    view.geometries.forEach(function (d) {
+    assets.geometries.forEach(function (d) {
         console.log('loading ' + d[1]);
         meshQueue.defer(function (done) {
-            view.meshLoader.load(d[1], function (geom, mat) {
-                var texture = view.textures.filter(function (e) {
+            assets.meshLoader.load(d[1], function (geom, mat) {
+                var texture = assets.textures.filter(function (e) {
                     return e[0] === d[0];
                 })[0];
                 if (texture !== undefined) {
-                    view.texLoader.load(texture[1], function (tex) {
+                    assets.texLoader.load(texture[1], function (tex) {
                         console.log('loading texture for ' + d[0]);
                         view.meshes[d[0]] = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({
                             map: tex
@@ -1046,246 +1270,7 @@ function loader(callback) {
     });
 }
 
-},{"../../node_modules/queue-async/queue":1,"./view":7}],4:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.startGame = startGame;
-
-var _Model = require("./Model");
-
-var model = _interopRequireWildcard(_Model);
-
-var _view = require("./view");
-
-var view = _interopRequireWildcard(_view);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function startGame(game) {
-    view.renderBoard(game);
-    view.render(game);
-    turn(game);
-}
-
-function turn(game) {
-    if (!gameOver(game)) {
-        console.log('determining whose turn');
-        var player = determinePlayer(game);
-        console.log('rolling the die');
-        var roll = rollDice(player, game);
-        endTurn(player, game);
-    } else {
-        runGameOver();
-    }
-}
-
-function rolled(player, dice, game) {
-    console.log("distributing resources");
-    resourceDistribution(player, dice, game);
-}
-
-function rolledSeven(player, dice, game) {
-    console.log('moving robber');
-    robberMove(player, game);
-}
-
-function runGameOver() {}
-
-function gameOver(game) {
-    var over = model.gameOver(game);
-    if (over) {
-        view.gameOver(game);
-        model.endGame(game);
-    }
-    return over;
-}
-
-function determinePlayer(game) {
-    var player = model.determinePlayer(game);
-    console.log('player ', player);
-    view.nextPlayer(player, game);
-    return player;
-}
-
-function rollDice(player, game) {
-    var dice = view.askForDiceRoll(player, game, rolled, rolledSeven);
-    return dice;
-}
-
-function robberMove(player, game) {
-    var robberMoved = model.robberMove(player, game, Math.floor(Math.random() * 36));
-    view.moveRobber(robberMoved, game);
-    buyPhase(player, game);
-}
-
-function steal(player, game) {
-    var stealee = model.steal(player, game);
-    view.stoleFrom(player, stealee, game);
-    buyPhase(player, game);
-}
-
-function resourceDistribution(player, roll, game) {
-    var resources = model.distributeRes(roll, game); //array of objects showing
-    //how many of each were given to that player e.g. [{},{'grain':2}] mean
-    //player 1 got nothing and player 2 got two grains
-    view.renderResourceDistribution(resources, game);
-    console.log('resources returned');
-    buyPhase(player, game);
-}
-
-function buyPhase(player, game) {
-    console.log('in buying phase');
-    view.startBuyPhase(player, turn, game);
-}
-
-function endTurn(player, game) {
-    model.endTurn(player, game);
-    view.showEndOfTurn(player, game);
-}
-
-},{"./Model":2,"./view":7}],5:[function(require,module,exports){
-"use strict";
-//import * as obj from "./utils/objForeach.js";
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _Model = require("./Model");
-
-var model = _interopRequireWildcard(_Model);
-
-var _view = require("./view");
-
-var view = _interopRequireWildcard(_view);
-
-var _controller = require("./controller");
-
-var controller = _interopRequireWildcard(_controller);
-
-var _assetLoader = require("./assetLoader");
-
-var loader = _interopRequireWildcard(_assetLoader);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-console.log(loader);
-
-loader.loader(main);
-
-function main() {
-				// var board = model.createSimpleBoard([0, 0]);
-				var myGame = new model.Game();
-				myGame.genBoard(4, 7);
-				var gameState = new model.GameState(myGame);
-				myGame.pushGameState(gameState);
-				var player0 = new model.PlayerState(gameState);
-				player0.color = 'orange';
-				gameState.pushPlayerState(player0);
-				var player1 = new model.PlayerState(gameState);
-				player1.color = 'blue';
-				gameState.pushPlayerState(player1);
-				presetStart(myGame);
-				controller.startGame(myGame);
-				//	player0.buyRoad([1,6]);
-				//	console.log(myGame);
-				//	view.renderBoard(myGame);
-				//    view.render();
-}
-
-function initialTurns(game) {
-				var _this = this;
-
-				if (game.turnCount == undefined) game.turnCount = 0;
-				if (game.globalpHouses == undefined) game.globalpHouses = game.Vertices;
-				var state = game.peekGameState();
-				var player = state.PlayerStates[game.turnCount % state.PlayerStates.length];
-				var updatepHouses = function updatepHouses(houseTuple) {
-								Model.sort(houseTuple);
-								//remove possible houses adjacent to one just purchased
-								//find pHouse elimination coords
-
-								var _houseTuple = _slicedToArray(houseTuple, 3);
-
-								var q = _houseTuple[0];
-								var r = _houseTuple[1];
-								var s = _houseTuple[2];
-
-								var intersects = [];
-								intersects.push({
-												x: q,
-												y: r,
-												z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[r].adj)
-								});
-								intersects.push({
-												x: q,
-												y: s,
-												z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[s].adj)
-								});
-								intersects.push({
-												x: r,
-												y: s,
-												z: Model.intersect_safe(_this.Hexes[r].adj, _this.Hexes[s].adj)
-								});
-								intersects.forEach(function (i) {
-												var _sort = sort([i.x, i.y, i.z.pop()]);
-
-												var _sort2 = _slicedToArray(_sort, 3);
-
-												var x = _sort2[0];
-												var y = _sort2[1];
-												var z = _sort2[2]; //I know this is terrible, shut up
-
-												Model.removeTriple(game.globalpHouses, x, y, z);
-
-												var _sort3 = sort([i.x, i.y, i.z.pop()]);
-
-												var _sort4 = _slicedToArray(_sort3, 3);
-
-												x = _sort4[0];
-												y = _sort4[1];
-												z = _sort4[2];
-
-												Model.removeTriple(game.globalpHouses, x, y, z);
-								});
-				};
-
-				//render possible houses
-
-				//click to place house
-
-				//
-}
-
-function presetStart(game) {
-				var player0 = game.peekGameState().PlayerStates[0];
-				var player1 = game.peekGameState().PlayerStates[1];
-				forceBuySettlement(game, player0, 5, 10, 11);
-				forceBuySettlement(game, player0, 25, 26, 31);
-				forceBuyRoad(game, player0, 25, 26);
-				forceBuyRoad(game, player0, 10, 11);
-				forceBuySettlement(game, player1, 7, 12, 13);
-				forceBuySettlement(game, player1, 23, 24, 29);
-				forceBuyRoad(game, player1, 12, 13);
-				forceBuyRoad(game, player1, 23, 24);
-}
-
-function forceBuySettlement(game, player, x, y, z) {
-				var pSettlements = player.pSettlements;
-				if (pSettlements[x] == undefined) pSettlements[x] = [];
-				if (pSettlements[x][y] == undefined) pSettlements[x][y] = [];
-				if (pSettlements[x][y][z] == undefined) pSettlements[x][y][z] = {};
-				player.buySettlement([x, y, z]);
-}
-function forceBuyRoad(game, player, x, y) {
-				var pRoads = player.pRoads;
-				if (pRoads[x] == undefined) pRoads[x] = [];
-				if (pRoads[x][y] == undefined) pRoads[x][y] = {};
-				player.buyRoad([x, y]);
-}
-
-},{"./Model":2,"./assetLoader":3,"./controller":4,"./view":7}],6:[function(require,module,exports){
+},{"../../..//node_modules/queue-async/queue":1,"../view/assetList":7,"../view/view":8}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1356,6 +1341,21 @@ function moreOdd(posA, posB, posC) {
 }
 
 },{}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var meshLoader = exports.meshLoader = new THREE.JSONLoader();
+var texLoader = exports.texLoader = new THREE.TextureLoader();
+
+var loadedTextures = exports.loadedTextures = {};
+
+var geometries = exports.geometries = [['hex-grain', '../assets/hex.json'], ['hex-wool', '../assets/hex.json'], ['hex-lumber', '../assets/hex.json'], ['hex-brick', '../assets/hex.json'], ['hex-ore', '../assets/hex.json'], ['hex-desert', '../assets/hex.json'], ['port', '../assets/boat.json'], ['robber', '../assets/robber.json'], ['token-2', '../assets/token.json'], ['token-3', '../assets/token.json'], ['token-4', '../assets/token.json'], ['token-5', '../assets/token.json'], ['token-6', '../assets/token.json'], ['token-7', '../assets/token.json'], ['token-8', '../assets/token.json'], ['token-9', '../assets/token.json'], ['token-10', '../assets/token.json'], ['token-11', '../assets/token.json'], ['token-12', '../assets/token.json'], ['settlement', '../assets/house.json'], ['city', '../assets/city.json'], ['road', '../assets/road.json']];
+
+var textures = exports.textures = [['hex-ore', '../assets/Ore.png'], ['hex-grain', '../assets/Grain.png'], ['hex-lumber', '../assets/Lumber.png'], ['hex-wool', '../assets/Wool.png'], ['hex-desert', '../assets/Desert.png'], ['hex-brick', '../assets/Brick.png'], ['token-2', '../assets/two.png'], ['token-3', '../assets/three.png'], ['token-4', '../assets/four.png'], ['token-5', '../assets/five.png'], ['token-6', '../assets/six.png'], ['token-7', '../assets/seven.png'], ['token-8', '../assets/eight.png'], ['token-9', '../assets/nine.png'], ['token-10', '../assets/ten.png'], ['token-11', '../assets/eleven.png'], ['token-12', '../assets/twelve.png']];
+
+},{}],8:[function(require,module,exports){
 "use strict";
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -1363,7 +1363,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.controls = exports.renderer = exports.camera = exports.textures = exports.geometries = exports.loadedTextures = exports.meshes = exports.texLoader = exports.meshLoader = undefined;
+exports.controls = exports.renderer = exports.camera = exports.meshes = undefined;
 exports.renderPiece = renderPiece;
 exports.renderCity = renderCity;
 exports.renderSettlement = renderSettlement;
@@ -1381,11 +1381,11 @@ exports.showEndOfTurn = showEndOfTurn;
 exports.moveRobber = moveRobber;
 exports.attachClick = attachClick;
 
-var _Model = require("./Model");
+var _model = require("../model/model");
 
-var model = _interopRequireWildcard(_Model);
+var model = _interopRequireWildcard(_model);
 
-var _worldManip = require("./utils/worldManip.js");
+var _worldManip = require("../utils/worldManip.js");
 
 var terraHammer = _interopRequireWildcard(_worldManip);
 
@@ -1393,12 +1393,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var scene = new THREE.Scene();
 
-var meshLoader = exports.meshLoader = new THREE.JSONLoader();
-var texLoader = exports.texLoader = new THREE.TextureLoader();
 var meshes = exports.meshes = {};
-var loadedTextures = exports.loadedTextures = {};
-var geometries = exports.geometries = [['hex-grain', '../assets/hex.json'], ['hex-wool', '../assets/hex.json'], ['hex-lumber', '../assets/hex.json'], ['hex-brick', '../assets/hex.json'], ['hex-ore', '../assets/hex.json'], ['hex-desert', '../assets/hex.json'], ['port', '../assets/boat.json'], ['robber', '../assets/robber.json'], ['token-2', '../assets/token.json'], ['token-3', '../assets/token.json'], ['token-4', '../assets/token.json'], ['token-5', '../assets/token.json'], ['token-6', '../assets/token.json'], ['token-7', '../assets/token.json'], ['token-8', '../assets/token.json'], ['token-9', '../assets/token.json'], ['token-10', '../assets/token.json'], ['token-11', '../assets/token.json'], ['token-12', '../assets/token.json'], ['settlement', '../assets/house.json'], ['city', '../assets/city.json'], ['road', '../assets/road.json']];
-var textures = exports.textures = [['hex-ore', '../assets/Ore.png'], ['hex-grain', '../assets/Grain.png'], ['hex-lumber', '../assets/Lumber.png'], ['hex-wool', '../assets/Wool.png'], ['hex-desert', '../assets/Desert.png'], ['hex-brick', '../assets/Brick.png'], ['token-2', '../assets/two.png'], ['token-3', '../assets/three.png'], ['token-4', '../assets/four.png'], ['token-5', '../assets/five.png'], ['token-6', '../assets/six.png'], ['token-7', '../assets/seven.png'], ['token-8', '../assets/eight.png'], ['token-9', '../assets/nine.png'], ['token-10', '../assets/ten.png'], ['token-11', '../assets/eleven.png'], ['token-12', '../assets/twelve.png']];
 
 var moveMeshes = {};
 
@@ -1617,7 +1612,6 @@ function nextPlayer(player, game) {
     function renderTile(name) {
         $('body > gui').append($("<div id='" + name + "' class='" + name + "Tile'></div>"));
         var tile = $('#' + name)[0];
-        //       tile.style.position = 'absolute';
         tile.style.bottom = 32 + 'px';
         tile.style.left = curSpace + 'px';
         tile.style.width = cardWidth + 'px';
@@ -1625,7 +1619,6 @@ function nextPlayer(player, game) {
         curSpace += cardSpace;
         $(tile).append("<div class='frosted'><p>" + player[name] + "</p></div>");
     }
-    console.log(player);
     renderTile('grain');
     renderTile('wool');
     renderTile('brick');
@@ -1639,7 +1632,7 @@ function askForDiceRoll(player, game, rolled, seven) {
     var gui = $('body > gui').append('<button id="roll">roll</button>');
 
     $('#roll').button().click(function (e) {
-        dice = model.rollDice(); //return pair array e.g. [1,5]
+        dice = model.rollDice();
         console.log('dice rolled a ', dice);
         if (dice === 7) seven(player, dice, game);else rolled(player, dice, game);
         $('#roll').remove();
@@ -1656,10 +1649,9 @@ function startBuyPhase(player, turn, game) {
     var gui = $('body > gui').append('<button id="endTurn">end</button>').append('<button id="buySettlement">Buy Settlement</button>').append('<button id="buyRoad">Buy Road</button>');
 
     $('#endTurn').button().click(function (e) {
-        turn(game); //return pair array e.g. [1,5]
+        turn(game);
     });
     $('#buySettlement').button().click(function (e) {
-        //make cancel button
         var exitBuySettlement = function exitBuySettlement() {
             $('#cancel').remove();
             removepMeshes();
@@ -1669,9 +1661,7 @@ function startBuyPhase(player, turn, game) {
             exitBuySettlement();
         });
 
-        //display possible meshes
         addpSettlements(player, game);
-        //if click on possible mesh, try to buy it
         attachClick(function (mesh) {
             console.log(mesh);
             if (mesh.model && mesh.model.possible) {
@@ -1687,7 +1677,6 @@ function startBuyPhase(player, turn, game) {
     });
     $('#buyRoad').button().click(function (e) {
         attachClick(function (mesh) {});
-        //turn(game); //return pair array e.g. [1,5]
     });
 
     $('#endTurn')[0].style.position = 'absolute';
@@ -1730,21 +1719,12 @@ function moveRobber(movePair, game) {
     moveMeshes['robber'].position.set(robberLoc.x, 0, robberLoc.y * .77);
 }
 function attachClick(callback) {
-    //var projector = new THREE.Projector();
-    //var directionVector = new THREE.Vector3();
-
     document.querySelector('canvas').addEventListener("click", function (evt) {
         var raycaster = new THREE.Raycaster();
         var SCREEN_WIDTH = window.innerWidth * .985;
         var SCREEN_HEIGHT = window.innerHeight * .98;
         var x = evt.clientX / SCREEN_WIDTH * 2 - 1;
         var y = -(evt.clientY / SCREEN_HEIGHT) * 2 + 1;
-
-        //directionVector.set(x, y, 1);
-        //projector.unprojectVector(directionVector, camera);
-        //directionVector.sub(camera.position);
-        //directionVector.normalize();
-        //raycaster.set(camera.position, directionVector);
         raycaster.setFromCamera(mouse, camera);
         var intersects = raycaster.intersectObjects(scene.children, true);
         if (intersects.length) {
@@ -1753,17 +1733,12 @@ function attachClick(callback) {
         }
     }, false);
 }
-//attachClick();
 
 var mouse = new THREE.Vector2();
 function onMouseMove(event) {
-
-    // calculate mouse position in normalized device coordinates
-    // (-1 to +1) for both components
-
     mouse.x = event.clientX / window.innerWidth * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 window.addEventListener('mousemove', onMouseMove, false);
 
-},{"./Model":2,"./utils/worldManip.js":6}]},{},[5]);
+},{"../model/model":4,"../utils/worldManip.js":6}]},{},[3]);
