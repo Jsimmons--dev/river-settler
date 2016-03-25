@@ -189,6 +189,10 @@ var _model = require("./model/model");
 
 var model = _interopRequireWildcard(_model);
 
+var _view = require("./view/view");
+
+var view = _interopRequireWildcard(_view);
+
 var _controller = require("./controller/controller");
 
 var controller = _interopRequireWildcard(_controller);
@@ -199,7 +203,7 @@ var loader = _interopRequireWildcard(_assetLoader);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-loader.loader(main);
+loader.loader(view.meshes, main);
 
 function main() {
 				var myGame = new model.Game();
@@ -300,7 +304,7 @@ function forceBuyRoad(game, player, x, y) {
 				player.buyRoad([x, y]);
 }
 
-},{"./controller/controller":2,"./model/model":4,"./utils/assetLoader":5}],4:[function(require,module,exports){
+},{"./controller/controller":2,"./model/model":4,"./utils/assetLoader":5,"./view/view":8}],4:[function(require,module,exports){
 "use strict";
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -1224,10 +1228,6 @@ var _queue = require("../../..//node_modules/queue-async/queue");
 
 var _queue2 = _interopRequireDefault(_queue);
 
-var _view = require("../view/view");
-
-var view = _interopRequireWildcard(_view);
-
 var _assetList = require("../view/assetList");
 
 var assets = _interopRequireWildcard(_assetList);
@@ -1236,11 +1236,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function loader(callback) {
+function loader(meshMap, callback) {
     var meshQueue = (0, _queue2.default)();
 
     assets.geometries.forEach(function (d) {
-        console.log('loading ' + d[1]);
         meshQueue.defer(function (done) {
             assets.meshLoader.load(d[1], function (geom, mat) {
                 var texture = assets.textures.filter(function (e) {
@@ -1248,14 +1247,13 @@ function loader(callback) {
                 })[0];
                 if (texture !== undefined) {
                     assets.texLoader.load(texture[1], function (tex) {
-                        console.log('loading texture for ' + d[0]);
-                        view.meshes[d[0]] = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({
+                        meshMap[d[0]] = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({
                             map: tex
                         }));
                         done(null, 'ok');
                     });
                 } else {
-                    view.meshes[d[0]] = new THREE.Mesh(geom, new THREE.MeshPhongMaterial({
+                    meshMap[d[0]] = new THREE.Mesh(geom, new THREE.MeshPhongMaterial({
                         color: 0x00ff00
                     }));
                     done(null, 'ok');
@@ -1265,12 +1263,11 @@ function loader(callback) {
     });
 
     meshQueue.awaitAll(function (error, res) {
-        console.log('assets loaded');
         callback();
     });
 }
 
-},{"../../..//node_modules/queue-async/queue":1,"../view/assetList":7,"../view/view":8}],6:[function(require,module,exports){
+},{"../../..//node_modules/queue-async/queue":1,"../view/assetList":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
