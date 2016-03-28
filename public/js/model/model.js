@@ -1,3 +1,6 @@
+export var view = {
+	"rootEl":"root"
+};
 var curGame; //hacky, fix anywhere that uses this
 var settlementPrice = {
     "brick": 1,

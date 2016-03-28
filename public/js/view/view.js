@@ -1,12 +1,18 @@
 "use strict";
 import * as model from "../model/model";
 import * as terraHammer from "../utils/worldManip.js";
+import * as gui from "./gui";
 
-var scene = new THREE.Scene();
-
+var scene;
 export var meshes = {};
 
 var moveMeshes = {};
+
+export function setupRoot(){
+	var root = document.createElement("div");
+	root.id = model.view.rootEl;
+	document.querySelector('body').appendChild(root);
+}
 
 export function renderPiece(owner, model, game, color) {
     console.log('model ', model);
@@ -15,7 +21,8 @@ export function renderPiece(owner, model, game, color) {
     piece.model = model;
     scene.add(piece);
     if (color === undefined) {
-        color = game.peekGameState().PlayerStates[owner].color
+        color = game.peekGameState()
+            .PlayerStates[owner].color
     }
     piece.material = new THREE.MeshPhongMaterial({
         color: color
@@ -109,7 +116,8 @@ function renderRobber(game) {
         color: 0xffd700
     });
     scene.add(robber);
-    var robberLoc = game.Hexes[game.peekGameState().robberLoc];
+    var robberLoc = game.Hexes[game.peekGameState()
+        .robberLoc];
     console.log(robberLoc);
     robber.position.set(robberLoc.x, 0, robberLoc.y * .77);
     robber.scale.set(.1, .2, .1);
@@ -128,13 +136,19 @@ export function renderBoard(game) {
     moveMeshes['robber'] = renderRobber(game);
 }
 
-export var camera = new THREE.PerspectiveCamera(75,
+var water;
+var renderer;
+var camera;
+
+export function startGame(){
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera(75,
     window.innerWidth / window.innerHeight,
     .1,
     1000);
-export var renderer = new THREE.WebGLRenderer();
+ renderer = new THREE.WebGLRenderer();
 
-export var controls = new THREE.OrbitControls(camera, renderer.domElement);
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.mouseButtons = {
     ORBIT: THREE.MOUSE.RIGHT,
     ZOOM: 4,
@@ -155,7 +169,7 @@ scene.add(dirLight);
 var waterNormals = new THREE.ImageUtils.loadTexture('assets/waternormals.jpg');
 waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
-var water = new THREE.Water(renderer, camera, scene, {
+ water = new THREE.Water(renderer, camera, scene, {
     textureWidth: 512,
     textureHeight: 512,
     waterNormals: waterNormals,
@@ -177,46 +191,52 @@ mirrorMesh.rotation.x = -Math.PI * 0.5;
 mirrorMesh.position.y = -.05;
 scene.add(mirrorMesh);
 
+}
+
 export function render(game) {
     water.material.uniforms.time.value += 0.05 / 60.0;
     water.render();
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 }
-
 //TODO --- from here down
 
 export function gameOver(game) {
 
 }
 
-function GUI(){
-	$('body').append('<gui></gui>');
-	var gui = $('gui')[0];
-	gui.style.position = 'absolute';
-	gui.style.top = 0;
-	
-	this.drawPlayerCounter = ()=>{
-   		 this.playerCounter = $('<div id="playerCounter"></div>')[0];
-   		 $('body > gui').append(this.playerCounter);
-			
-	}
-	this.updatePlayerCounter = (player)=>{
-		this.playerCounter.innerHTML = "It's player " + player.id + "'s turn";	
-		this.playerCounter.background = player.color;
-	}
+function GUI() {
+    $('body')
+        .append('<gui></gui>');
+    var gui = $('gui')[0];
+    gui.style.position = 'absolute';
+    gui.style.top = 0;
+
+    this.drawPlayerCounter = () => {
+        this.playerCounter = $('<div id="playerCounter"></div>')[0];
+        $('body > gui')
+            .append(this.playerCounter);
+
+    }
+    this.updatePlayerCounter = (player) => {
+        this.playerCounter.innerHTML = "It's player " + player.id + "'s turn";
+        this.playerCounter.background = player.color;
+    }
 }
 
 export function nextPlayer(player, game) {
-    $('body > gui').remove();
-    $('body').append('<gui></gui>');
+    $('body > gui')
+        .remove();
+    $('body')
+        .append('<gui></gui>');
     var gui = $('gui')[0];
     gui.style.position = 'absolute';
     gui.style.top = '0';
     var counter = $('<div id="playerCounter"></div>')[0];
     counter.innerHTML = "it's player " + player.id + "'s turn";
     counter.style.background = player.color;
-    $('body > gui').append(counter);
+    $('body > gui')
+        .append(counter);
 
     var cardWidth = 64;
     var cardHeight = 64;
@@ -224,14 +244,16 @@ export function nextPlayer(player, game) {
     var curSpace = 32;
 
     function renderTile(name) {
-        $('body > gui').append($("<div id='" + name + "' class='" + name + "Tile'></div>"));
+        $('body > gui')
+            .append($("<div id='" + name + "' class='" + name + "Tile'></div>"));
         var tile = $('#' + name)[0];
         tile.style.bottom = 32 + 'px';
         tile.style.left = curSpace + 'px';
         tile.style.width = cardWidth + 'px';
         tile.style.height = cardHeight + 'px';
         curSpace += cardSpace;
-        $(tile).append("<div class='frosted'><p>" + player[name] + "</p></div>");
+        $(tile)
+            .append("<div class='frosted'><p>" + player[name] + "</p></div>");
     }
     renderTile('grain');
     renderTile('wool');
@@ -253,7 +275,8 @@ export function askForDiceRoll(player, game, rolled, seven) {
             console.log('dice rolled a ', dice);
             if (dice === 7) seven(player, dice, game);
             else rolled(player, dice, game);
-            $('#roll').remove();
+            $('#roll')
+                .remove();
 
         });
 
@@ -277,14 +300,18 @@ export function startBuyPhase(player, turn, game) {
         .click((e) => {
             turn(game);
         });
-    $('#buySettlement').button()
+    $('#buySettlement')
+        .button()
         .click((e) => {
             var exitBuySettlement = () => {
-                $('#cancel').remove();
+                $('#cancel')
+                    .remove();
                 removepMeshes();
             }
-            $('body > gui').append('<button id="cancel">Cancel</button>')
-            $('#cancel').button()
+            $('body > gui')
+                .append('<button id="cancel">Cancel</button>')
+            $('#cancel')
+                .button()
                 .click((e) => {
                     exitBuySettlement();
                 });
@@ -296,19 +323,19 @@ export function startBuyPhase(player, turn, game) {
                     console.log(mesh.model.house);
                     var houseTuple = mesh.model.house.id.split('_');
                     player.buySettlement(houseTuple);
-                    $('#cancel').remove();
+                    $('#cancel')
+                        .remove();
                     removepMeshes();
-										
-					game.peekGameState()
-						.houseEach(renderSettlement);
+
+                    game.peekGameState()
+                        .houseEach(renderSettlement);
                 }
             });
         });
     $('#buyRoad')
         .button()
         .click((e) => {
-            attachClick((mesh) => {
-            });
+            attachClick((mesh) => {});
         });
 
     $('#endTurn')[0].style.position = 'absolute';
@@ -325,13 +352,14 @@ export function startBuyPhase(player, turn, game) {
 }
 
 function removepMeshes(game) {
-	scene.children.forEach((child) => {
-		if (child.model && child.model.house && child.model.house.possible) {
-			console.log("found p house", child);
-			scene.remove(child);
-		}
-	});
+    scene.children.forEach((child) => {
+        if (child.model && child.model.house && child.model.house.possible) {
+            console.log("found p house", child);
+            scene.remove(child);
+        }
+    });
 }
+
 function addpSettlements(player, game) {
     var renderpSettlement = (house, game) => {
         console.log(house);
@@ -347,17 +375,19 @@ function addpSettlements(player, game) {
 
 export function showEndOfTurn(player, endTurn, game) {}
 export function moveRobber(movePair, game) {
-    var robberLoc = game.Hexes[game.peekGameState().robberLoc];
+    var robberLoc = game.Hexes[game.peekGameState()
+        .robberLoc];
     moveMeshes['robber'].position.set(robberLoc.x, 0, robberLoc.y * .77);
 }
 export function attachClick(callback) {
-        document.querySelector('canvas').addEventListener("click", function(evt) {
-			var raycaster = new THREE.Raycaster();
+    document.querySelector('canvas')
+        .addEventListener("click", function (evt) {
+            var raycaster = new THREE.Raycaster();
             var SCREEN_WIDTH = window.innerWidth * .985;
             var SCREEN_HEIGHT = window.innerHeight * .98;
             var x = (evt.clientX / SCREEN_WIDTH) * 2 - 1;
             var y = -(evt.clientY / SCREEN_HEIGHT) * 2 + 1;
-			raycaster.setFromCamera(mouse, camera);
+            raycaster.setFromCamera(mouse, camera);
             var intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length) {
                 var target = intersects[0].object;
@@ -365,12 +395,15 @@ export function attachClick(callback) {
             }
         }, false);
 
-    }
+}
 
 
 var mouse = new THREE.Vector2();
-function onMouseMove( event ) {
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;		
+
+function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 window.addEventListener('mousemove', onMouseMove, false);
+
+export var showMainMenu = gui.showMainMenu;

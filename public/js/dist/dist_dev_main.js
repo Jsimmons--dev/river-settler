@@ -180,7 +180,7 @@ function endTurn(player, game) {
     view.showEndOfTurn(player, game);
 }
 
-},{"../model/model":4,"../view/view":8}],3:[function(require,module,exports){
+},{"../model/model":4,"../view/view":10}],3:[function(require,module,exports){
 "use strict";
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -206,105 +206,119 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 loader.loader(view.meshes, main);
 
 function main() {
-				var myGame = new model.Game();
-				myGame.genBoard(4, 7);
-				var gameState = new model.GameState(myGame);
-				myGame.pushGameState(gameState);
-				var player0 = new model.PlayerState(gameState);
-				player0.color = 'orange';
-				gameState.pushPlayerState(player0);
-				var player1 = new model.PlayerState(gameState);
-				player1.color = 'blue';
-				gameState.pushPlayerState(player1);
-				presetStart(myGame);
-				controller.startGame(myGame);
+	view.setupRoot();
+	console.log(document.querySelector("#" + model.view.rootEl));
+	var mainMenu = view.showMainMenu();
+	console.log(mainMenu);
+	mainMenu.playButton.onclick = function () {
+		var root = document.querySelector('#root');
+		console.log(root);
+		root.removeChild(mainMenu.menuNode);
+		view.startGame();
+		main_old();
+	};
+}
+
+function main_old() {
+	var myGame = new model.Game();
+	myGame.genBoard(4, 7);
+	var gameState = new model.GameState(myGame);
+	myGame.pushGameState(gameState);
+	var player0 = new model.PlayerState(gameState);
+	player0.color = 'orange';
+	gameState.pushPlayerState(player0);
+	var player1 = new model.PlayerState(gameState);
+	player1.color = 'blue';
+	gameState.pushPlayerState(player1);
+	presetStart(myGame);
+	controller.startGame(myGame);
 }
 
 function initialTurns(game) {
-				var _this = this;
+	var _this = this;
 
-				if (game.turnCount == undefined) game.turnCount = 0;
-				if (game.globalpHouses == undefined) game.globalpHouses = game.Vertices;
-				var state = game.peekGameState();
-				var player = state.PlayerStates[game.turnCount % state.PlayerStates.length];
-				var updatepHouses = function updatepHouses(houseTuple) {
-								Model.sort(houseTuple);
+	if (game.turnCount == undefined) game.turnCount = 0;
+	if (game.globalpHouses == undefined) game.globalpHouses = game.Vertices;
+	var state = game.peekGameState();
+	var player = state.PlayerStates[game.turnCount % state.PlayerStates.length];
+	var updatepHouses = function updatepHouses(houseTuple) {
+		Model.sort(houseTuple);
 
-								var _houseTuple = _slicedToArray(houseTuple, 3);
+		var _houseTuple = _slicedToArray(houseTuple, 3);
 
-								var q = _houseTuple[0];
-								var r = _houseTuple[1];
-								var s = _houseTuple[2];
+		var q = _houseTuple[0];
+		var r = _houseTuple[1];
+		var s = _houseTuple[2];
 
-								var intersects = [];
-								intersects.push({
-												x: q,
-												y: r,
-												z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[r].adj)
-								});
-								intersects.push({
-												x: q,
-												y: s,
-												z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[s].adj)
-								});
-								intersects.push({
-												x: r,
-												y: s,
-												z: Model.intersect_safe(_this.Hexes[r].adj, _this.Hexes[s].adj)
-								});
-								intersects.forEach(function (i) {
-												var _sort = sort([i.x, i.y, i.z.pop()]);
+		var intersects = [];
+		intersects.push({
+			x: q,
+			y: r,
+			z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[r].adj)
+		});
+		intersects.push({
+			x: q,
+			y: s,
+			z: Model.intersect_safe(_this.Hexes[q].adj, _this.Hexes[s].adj)
+		});
+		intersects.push({
+			x: r,
+			y: s,
+			z: Model.intersect_safe(_this.Hexes[r].adj, _this.Hexes[s].adj)
+		});
+		intersects.forEach(function (i) {
+			var _sort = sort([i.x, i.y, i.z.pop()]);
 
-												var _sort2 = _slicedToArray(_sort, 3);
+			var _sort2 = _slicedToArray(_sort, 3);
 
-												var x = _sort2[0];
-												var y = _sort2[1];
-												var z = _sort2[2];
+			var x = _sort2[0];
+			var y = _sort2[1];
+			var z = _sort2[2];
 
-												Model.removeTriple(game.globalpHouses, x, y, z);
+			Model.removeTriple(game.globalpHouses, x, y, z);
 
-												var _sort3 = sort([i.x, i.y, i.z.pop()]);
+			var _sort3 = sort([i.x, i.y, i.z.pop()]);
 
-												var _sort4 = _slicedToArray(_sort3, 3);
+			var _sort4 = _slicedToArray(_sort3, 3);
 
-												x = _sort4[0];
-												y = _sort4[1];
-												z = _sort4[2];
+			x = _sort4[0];
+			y = _sort4[1];
+			z = _sort4[2];
 
-												Model.removeTriple(game.globalpHouses, x, y, z);
-								});
-				};
+			Model.removeTriple(game.globalpHouses, x, y, z);
+		});
+	};
 }
 
 function presetStart(game) {
-				var player0 = game.peekGameState().PlayerStates[0];
-				var player1 = game.peekGameState().PlayerStates[1];
-				forceBuySettlement(game, player0, 5, 10, 11);
-				forceBuySettlement(game, player0, 25, 26, 31);
-				forceBuyRoad(game, player0, 25, 26);
-				forceBuyRoad(game, player0, 10, 11);
-				forceBuySettlement(game, player1, 7, 12, 13);
-				forceBuySettlement(game, player1, 23, 24, 29);
-				forceBuyRoad(game, player1, 12, 13);
-				forceBuyRoad(game, player1, 23, 24);
+	var player0 = game.peekGameState().PlayerStates[0];
+	var player1 = game.peekGameState().PlayerStates[1];
+	forceBuySettlement(game, player0, 5, 10, 11);
+	forceBuySettlement(game, player0, 25, 26, 31);
+	forceBuyRoad(game, player0, 25, 26);
+	forceBuyRoad(game, player0, 10, 11);
+	forceBuySettlement(game, player1, 7, 12, 13);
+	forceBuySettlement(game, player1, 23, 24, 29);
+	forceBuyRoad(game, player1, 12, 13);
+	forceBuyRoad(game, player1, 23, 24);
 }
 
 function forceBuySettlement(game, player, x, y, z) {
-				var pSettlements = player.pSettlements;
-				if (pSettlements[x] == undefined) pSettlements[x] = [];
-				if (pSettlements[x][y] == undefined) pSettlements[x][y] = [];
-				if (pSettlements[x][y][z] == undefined) pSettlements[x][y][z] = {};
-				player.buySettlement([x, y, z]);
+	var pSettlements = player.pSettlements;
+	if (pSettlements[x] == undefined) pSettlements[x] = [];
+	if (pSettlements[x][y] == undefined) pSettlements[x][y] = [];
+	if (pSettlements[x][y][z] == undefined) pSettlements[x][y][z] = {};
+	player.buySettlement([x, y, z]);
 }
 
 function forceBuyRoad(game, player, x, y) {
-				var pRoads = player.pRoads;
-				if (pRoads[x] == undefined) pRoads[x] = [];
-				if (pRoads[x][y] == undefined) pRoads[x][y] = {};
-				player.buyRoad([x, y]);
+	var pRoads = player.pRoads;
+	if (pRoads[x] == undefined) pRoads[x] = [];
+	if (pRoads[x][y] == undefined) pRoads[x][y] = {};
+	player.buyRoad([x, y]);
 }
 
-},{"./controller/controller":2,"./model/model":4,"./utils/assetLoader":5,"./view/view":8}],4:[function(require,module,exports){
+},{"./controller/controller":2,"./model/model":4,"./utils/assetLoader":5,"./view/view":10}],4:[function(require,module,exports){
 "use strict";
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -321,6 +335,9 @@ exports.endTurn = endTurn;
 exports.endGame = endGame;
 exports.robberMove = robberMove;
 exports.rollDice = rollDice;
+var view = exports.view = {
+    "rootEl": "root"
+};
 var curGame; //hacky, fix anywhere that uses this
 var settlementPrice = {
     "brick": 1,
@@ -1355,12 +1372,104 @@ var textures = exports.textures = [['hex-ore', '../assets/Ore.png'], ['hex-grain
 },{}],8:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.showMainMenu = undefined;
+
+var _menus = require("./menus");
+
+var menus = _interopRequireWildcard(_menus);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+//function GUI(opt){
+//	var {
+//		skillBarLength = 4;	
+//	} = opt;
+//	this.render(){
+//		let guiStyle = document.createElement('style');
+//		guiStyle.type = 'text/css';
+//		guiStyle.innerHtml = `
+//				.gui {
+//						position:absolute;
+//						width:98vw;
+//						height:98vh;
+//						top:0;
+//						left:0;
+//				}	
+//				`;
+//
+//		let guiEl = document.createELement('div');
+//		guiEl.className = 'gui';
+//		document.querySelector('body').appendChild(guiEl);
+//	}
+//
+//	let skillBar = [];
+//}
+
+var showMainMenu = exports.showMainMenu = menus.showMainMenu;
+
+},{"./menus":9}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.showMainMenu = showMainMenu;
+
+var _model = require("../model/model");
+
+var model = _interopRequireWildcard(_model);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var dom = {
+	"makeEl": function makeEl(tag) {
+		return document.createElement(tag);
+	},
+	"makeText": function makeText(text) {
+		return document.createTextNode(text);
+	},
+	"query": function query(_query) {
+		return document.querySelector(_query);
+	}
+};
+
+function showMainMenu() {
+	var menuNode = dom.makeEl("div");
+	model.view.menuEl = menuNode.id = "menu";
+
+	var menuLabel = dom.makeEl("div");
+	menuNode.appendChild(menuLabel);
+	var menuText = dom.makeText("Main Menu");
+	menuLabel.appendChild(menuText);
+	menuNode.appendChild(menuLabel);
+
+	var playButton = dom.makeEl("button");
+	var playText = dom.makeText("Play");
+	playButton.appendChild(playText);
+	menuNode.appendChild(playButton);
+
+	var viewRoot = dom.query("#" + model.view.rootEl);
+	viewRoot.appendChild(menuNode);
+
+	return {
+		menuNode: menuNode,
+		playButton: playButton
+	};
+}
+
+},{"../model/model":4}],10:[function(require,module,exports){
+"use strict";
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.controls = exports.renderer = exports.camera = exports.meshes = undefined;
+exports.showMainMenu = exports.meshes = undefined;
+exports.setupRoot = setupRoot;
 exports.renderPiece = renderPiece;
 exports.renderCity = renderCity;
 exports.renderSettlement = renderSettlement;
@@ -1368,6 +1477,7 @@ exports.renderRoad = renderRoad;
 exports.renderToken = renderToken;
 exports.renderHex = renderHex;
 exports.renderBoard = renderBoard;
+exports.startGame = startGame;
 exports.render = render;
 exports.gameOver = gameOver;
 exports.nextPlayer = nextPlayer;
@@ -1386,13 +1496,22 @@ var _worldManip = require("../utils/worldManip.js");
 
 var terraHammer = _interopRequireWildcard(_worldManip);
 
+var _gui = require("./gui");
+
+var gui = _interopRequireWildcard(_gui);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-var scene = new THREE.Scene();
-
+var scene;
 var meshes = exports.meshes = {};
 
 var moveMeshes = {};
+
+function setupRoot() {
+    var root = document.createElement("div");
+    root.id = model.view.rootEl;
+    document.querySelector('body').appendChild(root);
+}
 
 function renderPiece(owner, model, game, color) {
     console.log('model ', model);
@@ -1522,44 +1641,51 @@ function renderBoard(game) {
     moveMeshes['robber'] = renderRobber(game);
 }
 
-var camera = exports.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
-var renderer = exports.renderer = new THREE.WebGLRenderer();
+var water;
+var renderer;
+var camera;
 
-var controls = exports.controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.mouseButtons = {
-    ORBIT: THREE.MOUSE.RIGHT,
-    ZOOM: 4,
-    PAN: THREE.MOUSE.MIDDLE
-};
-renderer.setClearColor(0x88ddff);
-renderer.setSize(window.innerWidth * .985, window.innerHeight * .98);
-document.body.appendChild(renderer.domElement);
-camera.position.set(5, 9, 2);
-camera.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
+function startGame() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
+    renderer = new THREE.WebGLRenderer();
 
-var dirLight = new THREE.DirectionalLight(0xffffff);
-dirLight.position.set(0, 100, 0);
-scene.add(dirLight);
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.mouseButtons = {
+        ORBIT: THREE.MOUSE.RIGHT,
+        ZOOM: 4,
+        PAN: THREE.MOUSE.MIDDLE
+    };
+    renderer.setClearColor(0x88ddff);
+    renderer.setSize(window.innerWidth * .985, window.innerHeight * .98);
+    document.body.appendChild(renderer.domElement);
+    camera.position.set(5, 9, 2);
+    camera.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
 
-var waterNormals = new THREE.ImageUtils.loadTexture('assets/waternormals.jpg');
-waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+    var dirLight = new THREE.DirectionalLight(0xffffff);
+    dirLight.position.set(0, 100, 0);
+    scene.add(dirLight);
 
-var water = new THREE.Water(renderer, camera, scene, {
-    textureWidth: 512,
-    textureHeight: 512,
-    waterNormals: waterNormals,
-    alpha: 1.0,
-    sunDirection: dirLight.position.clone().normalize(),
-    sunColor: 0xffffff,
-    waterColor: 0x001e0f
-});
+    var waterNormals = new THREE.ImageUtils.loadTexture('assets/waternormals.jpg');
+    waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
-var mirrorMesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(10000, 10000), water.material);
+    water = new THREE.Water(renderer, camera, scene, {
+        textureWidth: 512,
+        textureHeight: 512,
+        waterNormals: waterNormals,
+        alpha: 1.0,
+        sunDirection: dirLight.position.clone().normalize(),
+        sunColor: 0xffffff,
+        waterColor: 0x001e0f
+    });
 
-mirrorMesh.add(water);
-mirrorMesh.rotation.x = -Math.PI * 0.5;
-mirrorMesh.position.y = -.05;
-scene.add(mirrorMesh);
+    var mirrorMesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(10000, 10000), water.material);
+
+    mirrorMesh.add(water);
+    mirrorMesh.rotation.x = -Math.PI * 0.5;
+    mirrorMesh.position.y = -.05;
+    scene.add(mirrorMesh);
+}
 
 function render(game) {
     water.material.uniforms.time.value += 0.05 / 60.0;
@@ -1567,7 +1693,6 @@ function render(game) {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 }
-
 //TODO --- from here down
 
 function gameOver(game) {}
@@ -1697,6 +1822,7 @@ function removepMeshes(game) {
         }
     });
 }
+
 function addpSettlements(player, game) {
     var renderpSettlement = function renderpSettlement(house, game) {
         console.log(house);
@@ -1732,10 +1858,13 @@ function attachClick(callback) {
 }
 
 var mouse = new THREE.Vector2();
+
 function onMouseMove(event) {
     mouse.x = event.clientX / window.innerWidth * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 window.addEventListener('mousemove', onMouseMove, false);
 
-},{"../model/model":4,"../utils/worldManip.js":6}]},{},[3]);
+var showMainMenu = exports.showMainMenu = gui.showMainMenu;
+
+},{"../model/model":4,"../utils/worldManip.js":6,"./gui":8}]},{},[3]);

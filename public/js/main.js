@@ -6,7 +6,18 @@ import * as loader from "./utils/assetLoader";
 
 loader.loader(view.meshes,main);
 
-function main() {
+function main(){
+	view.setupRoot();
+	var mainMenu = view.showMainMenu();
+	mainMenu.playButton.onclick = ()=>{
+		var root =	document.querySelector('#root');
+		root.removeChild(mainMenu.menuNode);
+		view.startGame();
+		main_old();
+	}
+}
+
+function main_old() {
 	var myGame = new model.Game();
 	myGame.genBoard(4, 7);
 	var gameState = new model.GameState(myGame);
