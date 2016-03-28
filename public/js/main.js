@@ -1,11 +1,10 @@
 "use strict";
 import * as model from "./model/model";
+import * as view from "./view/view";
 import * as controller from "./controller/controller";
 import * as loader from "./utils/assetLoader";
 
-console.log(loader);
-
-loader.loader(main);
+loader.loader(view.meshes,main);
 
 function main() {
 	var myGame = new model.Game();
