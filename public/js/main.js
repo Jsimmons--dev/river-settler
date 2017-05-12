@@ -1,16 +1,9 @@
 "use strict";
-//import * as model from "./model/model";
-//import * as view from "./view/view";
-//import * as controller from "./controller/controller";
-//import * as loader from "./utils/assetLoader";
 import * as ui from "./ui/ui";
 
-//loader.loader(view.meshes,loadStart);
+console.log(ui);
+ui.navigate('start');
 
-function loadStart(){
-    ui.navigate("start");
-}
-loadStart();
 
 function main() {
 	var myGame = new model.Game();

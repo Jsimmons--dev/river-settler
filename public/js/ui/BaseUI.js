@@ -13,5 +13,8 @@ export class BaseUI{
             this.class=that.constructor.name;
         })();
     }
-
+    
+    setController(controller){
+        this.controller = controller;
+    }
 }

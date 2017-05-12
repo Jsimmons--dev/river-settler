@@ -1,7 +1,29 @@
 import {BaseUI} from "./BaseUI";
 
 export class OptionsUI extends BaseUI{
-    init(uiRoot, context){
     
+    constructor(controller){
+        super();
+        this.controller = controller;
+        this.model = controller.model;
     }
+
+    init(uiRoot){
+       
+        let backEle = document.createElement('a');
+        backEle.className = "col offset-s3 s6 btn waves-effect waves-light";
+        backEle.appendChild(document.createTextNode("back"));
+        backEle.addEventListener('click',this.controller.scope.swapBack);
+        
+        uiRoot.innerHTML = `
+            <div class="col" style="height:50%"></div>
+            <div id='optionButtons' class="row">
+            </div>
+            `;
+
+        
+
+        uiRoot.querySelector('#optionButtons').appendChild(backEle);
+        
+   } 
 }
