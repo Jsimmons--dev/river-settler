@@ -27,7 +27,8 @@
   "homepage": "https://github.com/Jsimmons--dev/river-settler#readme",
   "dependencies": {
     "express": "^4.13.3",
-    "handlebars": "^4.0.8"
+    "handlebars": "^4.0.8",
+    "three": "^0.85.2"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",

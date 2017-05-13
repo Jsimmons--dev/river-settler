@@ -2,12 +2,13 @@ import * as ui from "../ui/ui";
 
 export class StartController{
 
-    constructor(model){
-        this.model = model;
-        this.scope = {}; 
-
-        this.scope.swapToOptionsView = () => {
+    constructor(){
+        this.swapToOptionsView = () => {
             ui.navigate('options');
+        };
+
+        this.navigateNewGame = () => {
+            ui.navigate('new');
         };
     }
 }

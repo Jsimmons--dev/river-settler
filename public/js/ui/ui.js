@@ -1,32 +1,30 @@
-import {StartController} from "../controllers/StartController";
-import {OptionsController} from "../controllers/OptionsController";
-import {StartUI} from "./StartUI";
-import {OptionsUI} from "./OptionsUI";
+import {UiFactory} from './UiFactory';
+import {LifecycleManager} from '../lifecycle/LifecycleManager';
 
-let uiModel = {
+export let routes = ['start', 'options', 'new', 'game'];
+
+export let uiModel = {
     name: 'Josh'
 };
 
-let uiRoot = document.createElement('div');
+export let uiRoot = document.createElement('div');
 uiRoot.style.height = '100vh';
 uiRoot.style.width = '100vw';
 uiRoot.style.position = 'absolute';
-
 document.body.appendChild(uiRoot);
 
-let currentView;
-let currentRoute;
+export let currentView;
 
-let viewStack = [];
+export let currentRoute;
 
-let routeElements = {};
+let viewHistory = [];
 
-let routeMap = {
-    'start': new StartUI(new StartController(uiModel)),
-    'options': new OptionsUI(new OptionsController(uiModel))
-}
+let routeRoots = {};
 
-for(let [route, uiClass] of Object.entries(routeMap)){
+
+let uiFactory = new UiFactory();
+
+for(let route of routes){
     let newNode = document.createElement('div');
     newNode.style.height = '100%';
     newNode.style.width = '100%';
@@ -34,34 +32,30 @@ for(let [route, uiClass] of Object.entries(routeMap)){
     newNode.id = route + '-ui';
     uiRoot.appendChild(newNode);
 
-    routeElements[route] = newNode;
-    uiClass.init(routeElements[route]);
+    uiFactory.create(route, newNode)
+
+    routeRoots[route] = newNode;
 }
 
 export function changeUI(route){
     if(currentView !== undefined){
         currentView.style.display = 'none';
     }
-    routeElements[route].style.display = 'block';
-    currentView = routeElements[route];
+    routeRoots[route].style.display = 'block';
+    currentView = routeRoots[route];
     currentRoute = route;
+
+    LifecycleManager.visit(route);
 }
 
 export function navigate(route){
     if(currentRoute !== undefined){
-        viewStack.push(currentRoute);
+        viewHistory.push(currentRoute);
     }
     changeUI(route);
 }
 
 export function navigateBack(){
-    let route = viewStack.pop();
-    console.log(route);
+    let route = viewHistory.pop();
     changeUI(route);
-}
-
-export function addControllers(controllerMap){
-    for(let [route, uiClass] of Object.entries(routeMap)){
-        uiClass.setController(controllerMap[route]);
-    }
 }
