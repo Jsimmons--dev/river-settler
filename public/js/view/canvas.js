@@ -3,7 +3,7 @@ import * as THREE from 'three';
 var scene, camera, renderer;
 var geometry, material, mesh;
 
-export function init() {
+export function init(element) {
 
     scene = new THREE.Scene();
 
@@ -19,11 +19,11 @@ export function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
 
-    document.body.appendChild( renderer.domElement );
+    element.appendChild( renderer.domElement );
 
 }
 
-function animate() {
+export function animate() {
 
     requestAnimationFrame( animate );
 

@@ -11,16 +11,17 @@ export class UiFactory{
     constructor(){
         if(!instance){
             instance = this;
+
+            instance.uiMap = {
+                'start': StartUI,
+                'options': OptionsUI,
+                'new': NewGameUI,
+                'game': GameUI
+            }
+
+            instance.controllerFactory = new ControllerFactory();
         } 
 
-        instance.uiMap = {
-            'start': StartUI,
-            'options': OptionsUI,
-            'new': NewGameUI,
-            'game': GameUI
-        }
-
-        instance.controllerFactory = new ControllerFactory();
 
         return instance;
     }

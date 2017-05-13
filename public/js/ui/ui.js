@@ -1,7 +1,6 @@
 import {UiFactory} from './UiFactory';
 import {LifecycleManager} from '../lifecycle/LifecycleManager';
-
-export let routes = ['start', 'options', 'new', 'game'];
+import {routes} from '../view/routes';
 
 export let uiModel = {
     name: 'Josh'
@@ -37,15 +36,17 @@ for(let route of routes){
     routeRoots[route] = newNode;
 }
 
+let lifecycleManager = new LifecycleManager();
 export function changeUI(route){
     if(currentView !== undefined){
         currentView.style.display = 'none';
+        lifecycleManager.leave(currentRoute);
     }
     routeRoots[route].style.display = 'block';
     currentView = routeRoots[route];
     currentRoute = route;
 
-    LifecycleManager.visit(route);
+    lifecycleManager.visit(route);
 }
 
 export function navigate(route){

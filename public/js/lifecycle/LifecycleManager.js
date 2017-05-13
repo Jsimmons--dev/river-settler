@@ -1,22 +1,22 @@
 import {ControllerFactory} from '../controllers/ControllerFactory';
-import {RouteManager} from '../view/RouteManager';
+import {routes} from '../view/routes';
 let instance = null;
 export class LifecycleManager{
     constructor(){
         if(!instance){
         instance = this;
-        }
+
         instance.controllerFactory = new ControllerFactory();
-        instance.routeManager = new RouteManager();
         
         instance.routeStates = {};
 
-        instance.routeManager.routes.forEach((route)=>{
-            routeStates[route] = {
+        routes.forEach((route)=>{
+            instance.routeStates[route] = {
                 landed: false,
                 visitCount: 0
             }; 
         });
+        }
         return instance;
     }
 
@@ -32,6 +32,7 @@ export class LifecycleManager{
     }
 
     leave(route){
+        let controller = this.controllerFactory.get(route);
         controller.OnLeave(); 
     }
 }

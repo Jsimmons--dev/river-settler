@@ -6,8 +6,15 @@ export class GameUI extends BaseUI{
         super();
         this.controller = controller;
 
-        uiRoot.innerHTML = `
-            <div id='gameCanvas' class="col" style="height:80%; margin-top:20%"></div>
-            `;
+        uiRoot.innerHTML = `<div style='height:50%;' id='canvasNode'></div>`;
+
+        this.controller.canvasNode = uiRoot.querySelector('#canvasNode');
+        console.log(controller);
+
+        let backEle = document.createElement('a');
+        backEle.className = "col offset-s3 s6 btn waves-effect waves-light";
+        backEle.appendChild(document.createTextNode("Back"));
+        backEle.addEventListener('click',this.controller.swapBack);
+        uiRoot.appendChild(backEle);
     }
 }

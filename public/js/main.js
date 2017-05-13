@@ -1,7 +1,6 @@
 "use strict";
 import * as ui from "./ui/ui";
 
-console.log(ui);
 ui.navigate('start');
 
 
