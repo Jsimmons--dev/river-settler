@@ -1,5 +1,6 @@
 import * as canvas from '../view/canvas';
 import * as ui from "../ui/ui";
+import {context} from '../models/gameContext';
 import {Controller} from './Controller';
 
 export class GameController extends Controller{
