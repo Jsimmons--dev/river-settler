@@ -13,7 +13,7 @@ export class GameUI extends BaseUI{
             <div style='height:0%;' id='canvasNode'></div>
            <a id='currentPlayerNumber' class='col offset-s3 s6 deep-purple darken-2 btn waves-effect waves-light'></a>`;
 
-        let currentPlayerWatcher = context.currentPlayer.watch(document.querySelector('#currentPlayerNumber')).run();
+        let currentPlayerWatcher = context.currentPlayerNumber.watch(document.querySelector('#currentPlayerNumber')).run();
 
         this.controller.canvasNode = uiRoot.querySelector('#canvasNode');
 

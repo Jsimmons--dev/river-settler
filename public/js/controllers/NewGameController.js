@@ -8,19 +8,18 @@ export class NewGameController extends Controller{
     constructor(model){
         super();
         this.model = model;
-        this.scope = {}; 
 
-        this.scope.navigateBack = () => {
+        this.navigateBack = () => {
             ui.navigateBack();
         };
 
-        this.scope.navigateOptions = () => {
+        this.navigateOptions = () => {
             ui.navigate('options');
         };
 
-        this.scope.generateGame = () => {
+        this.generateGame = () => {
             ui.navigate('game');
-            context.game = gameGenerator.generateGame();
+            context.loadGame(gameGenerator.generateGame());
         }
     }
 }

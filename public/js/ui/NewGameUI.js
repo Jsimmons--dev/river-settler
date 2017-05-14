@@ -13,12 +13,12 @@ export class NewGameUI extends BaseUI{
             `;
 
         document.querySelector('#generateGameButton')
-            .addEventListener('click', this.controller.scope.generateGame);
+            .addEventListener('click', this.controller.generateGame);
        
         let backEle = document.createElement('a');
         backEle.className = "col offset-s3 s6 btn waves-effect waves-light";
         backEle.appendChild(document.createTextNode("Back"));
-        backEle.addEventListener('click',this.controller.scope.navigateBack);
+        backEle.addEventListener('click',this.controller.navigateBack);
 
 
         uiRoot.appendChild(backEle);
@@ -26,7 +26,7 @@ export class NewGameUI extends BaseUI{
         let optionsEle = document.createElement('a');
         optionsEle.className = "col offset-s3 s6 btn waves-effect waves-light";
         optionsEle.appendChild(document.createTextNode("Options"));
-        optionsEle.addEventListener('click',this.controller.scope.navigateOptions);
+        optionsEle.addEventListener('click',this.controller.navigateOptions);
 
 
         uiRoot.appendChild(optionsEle);
