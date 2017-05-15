@@ -1,4 +1,4 @@
-import {BaseUI} from "./BaseUI";
+import {BaseUI} from './BaseUI';
 
 export class StartUI extends BaseUI{
     
@@ -13,14 +13,16 @@ export class StartUI extends BaseUI{
         optionsEle.addEventListener('click',this.controller.swapToOptionsView);
         
         uiRoot.innerHTML = `
+            <div id='startCanvas' style='height:0%;'></div>
             <div class="col" style="height:50%"></div>
             <div id='startButtons' class="row">
-                <p id='startGameButton' class="col offset-s3 s6 btn waves-effect waves-light">Start New Game</p>
-                <p class="col offset-s3 s6 btn waves-effect waves-light">Load Scenario</p>
-                <p class="col offset-s3 s6 btn waves-effect waves-light">Scenario Editor</p>
+                <a id='startGameButton' class="col offset-s3 s6 btn waves-effect waves-light">Start New Game</a>
+                <a class="col offset-s3 s6 btn waves-effect waves-light">Load Scenario</a>
+                <a class="col offset-s3 s6 btn waves-effect waves-light">Scenario Editor</a>
             </div>
             `;
 
+        this.controller.canvasNode = uiRoot.querySelector('#startCanvas');
         document.querySelector('#startGameButton').addEventListener('click', this.controller.navigateNewGame);
         
 

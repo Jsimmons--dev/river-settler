@@ -20,7 +20,11 @@ export class GameController extends Controller{
     OnLanding(){
         console.log('landed');
         console.log(this);
-        canvas.init(this.canvasNode);    
-        canvas.animate();    
+        this.canvas = canvas.init(this.canvasNode);    
+    }
+
+    OnVisit(){
+        console.log('visited');
+        this.canvas.animate(); 
     }
 }
