@@ -29,12 +29,12 @@ export var geometries = [
 ];
 
 export var textures = [
-    ['hex-ore', '../assets/Ore.png'],
     ['hex-grain', '../assets/Grain.png'],
-    ['hex-lumber', '../assets/Lumber.png'],
     ['hex-wool', '../assets/Wool.png'],
-    ['hex-desert', '../assets/Desert.png'],
+    ['hex-lumber', '../assets/Lumber.png'],
     ['hex-brick', '../assets/Brick.png'],
+    ['hex-ore', '../assets/Ore.png'],
+    ['hex-desert', '../assets/Desert.png'],
     ['token-2', '../assets/two.png'],
     ['token-3', '../assets/three.png'],
     ['token-4', '../assets/four.png'],
