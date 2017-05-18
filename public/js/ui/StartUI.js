@@ -10,8 +10,8 @@ export class StartUI extends BaseUI{
         let optionsEle = document.createElement('a');
         optionsEle.className = "col offset-s3 s6 btn waves-effect waves-light";
         optionsEle.appendChild(document.createTextNode("Options"));
-        optionsEle.addEventListener('click',this.controller.swapToOptionsView);
-        
+        optionsEle.addEventListener('click',this.controller.fadeToOptions);
+        uiRoot.style.background = '#88ddff'; 
         uiRoot.innerHTML = `
             <div id='startCanvas' style='height:0%;'></div>
             <div class="col" style="height:50%"></div>
