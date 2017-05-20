@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "./run.sh",
+    "serve": "cd public && parallelshell 'watchify js/main.js -d -t [babelify] -o js/dist/bundle.js -v' 'browser-sync start --open external --server --files \" js/dist/bundle.js\"'",
     "model": "./run-model.sh"
   },
   "babel": {

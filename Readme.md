@@ -8,8 +8,6 @@ npm install
 
 #Running
 ```bash
-npm start
+npm run serve 
 ```
 
-will launch the server on port 3000.
-navigate to localhost:3000 to start the game.
