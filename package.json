@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "./run.sh",
-    "serve": "cd public && parallelshell 'watchify js/main.js -d -t [babelify] -o js/dist/bundle.js -v' 'browser-sync start --open external --server --files \" js/dist/bundle.js\"'",
+    "serve": "cd public && concurrently 'watchify js/main.js -d -t [babelify] -o js/dist/bundle.js -v' 'browser-sync start --open external --server --files \" js/dist/bundle.js\"'",
     "model": "./run-model.sh"
   },
   "babel": {
@@ -27,8 +27,6 @@
   },
   "homepage": "https://github.com/Jsimmons--dev/river-settler#readme",
   "dependencies": {
-    "express": "^4.13.3",
-    "handlebars": "^4.0.8",
     "orbit-controls-es6": "^1.0.8",
     "three": "^0.85.2"
   },
@@ -38,7 +36,6 @@
     "jasmine-core": "^2.6.1",
     "karma": "^1.6.0",
     "karma-chrome-launcher": "^2.1.0",
-    "karma-jasmine": "^1.1.0",
-    "queue-async": "^1.0.7"
+    "karma-jasmine": "^1.1.0"
   }
 }
