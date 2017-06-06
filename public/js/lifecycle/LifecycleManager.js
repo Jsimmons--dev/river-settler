@@ -1,23 +1,18 @@
 import {ControllerFactory} from '../controllers/ControllerFactory';
 import {routes} from '../view/routes';
-let instance = null;
-export class LifecycleManager{
-    constructor(){
-        if(!instance){
-        instance = this;
 
-        instance.controllerFactory = new ControllerFactory();
+export class LifecycleManager{
+    constructor(controllerFactory){
+        this.controllerFactory = controllerFactory;
         
-        instance.routeStates = {};
+        this.routeStates = {};
 
         routes.forEach((route)=>{
-            instance.routeStates[route] = {
+            this.routeStates[route] = {
                 landed: false,
                 visitCount: 0
             }; 
         });
-        }
-        return instance;
     }
 
     visit(route){

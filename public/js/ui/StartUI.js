@@ -4,7 +4,6 @@ export class StartUI extends BaseUI{
     
     constructor(controller, uiRoot){
         super();
-        console.log(controller)
         this.controller = controller;
        
         let optionsEle = document.createElement('a');

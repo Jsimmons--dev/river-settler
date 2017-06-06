@@ -8,7 +8,6 @@ export class GameController extends Controller{
 
     constructor(model){
         super();
-        console.log('constructing game controller');
         this.toggleToolbar = (toolbarId) => {
            document.querySelector('#' + toolbarId).classList.toggle('hide');
         };
@@ -32,7 +31,6 @@ export class GameController extends Controller{
         let jsonLoader = new THREE.JSONLoader();
 
         jsonLoader.load('../../assets/hex.json',(geometry, materials)=>{
-            console.log('loaded hex');
             let material = new THREE.MeshLambertMaterial();
             let hex = new THREE.Mesh(geometry, material);
             hex.rotation.set(0, Math.PI / 2, 0);
