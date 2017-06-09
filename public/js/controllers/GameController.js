@@ -6,10 +6,14 @@ import {Controller} from './Controller';
 
 export class GameController extends Controller{
 
-    constructor(model){
+    constructor(startConfig){
+        context.game = new Game({
+            playerCount: startConfig.playerCount
+        });
+        context.gameController = new GameController();
         super();
         this.toggleToolbar = (toolbarId) => {
-           document.querySelector('#' + toolbarId).classList.toggle('hide');
+            document.querySelector('#' + toolbarId).classList.toggle('hide');
         };
     }
 
@@ -36,11 +40,11 @@ export class GameController extends Controller{
             hex.rotation.set(0, Math.PI / 2, 0);
             scene.add(hex);
             function animate(){
-               requestAnimationFrame(animate);
-               renderer.render(scene, camera); 
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera); 
             }
             animate();
-            });
+        });
     }
 
     OnVisit(){
