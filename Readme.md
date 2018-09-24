@@ -11,6 +11,8 @@ npm install
 npm install -g concurrently
 npm install -g babelify
 npm install -g watchify
+npm install -g browser-sync
+npm install -g browserify
 ```
 
 #Running
